@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Time Converter</title>
+  <style>
+    :root { --bg:#f8fafc; --fg:#0f172a; --muted:#64748b; --card:#fff; --br:#e2e8f0; --pri:#4f46e5; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial; background:var(--bg); color:#0f172a; }
+    .wrap { max-width:960px; margin:0 auto; padding:16px; }
+    h1 { font-size:22px; margin:0 0 6px; }
+    .note { color:var(--muted); margin:0 0 12px; font-size:14px; }
+    .section { margin:12px 0; }
+    .title { font-weight:700; margin:0 0 8px; font-size:15px; text-transform:uppercase; letter-spacing:.02em; color:#334155; }
+    .grid2 { display:grid; gap:12px; grid-template-columns:1fr; }
+    .grid3 { display:grid; gap:12px; grid-template-columns:1fr; }
+    @media (min-width:800px){ .grid2{ grid-template-columns:1.2fr 1fr; } .grid3{ grid-template-columns:1fr 1fr 1fr; } }
+    .card { background:var(--card); border:1px solid var(--br); border-radius:16px; padding:12px; }
+    label { display:block; font-weight:600; margin:0 0 6px; font-size:14px; }
+    input[type="text"], select { width:100%; border:1px solid var(--br); border-radius:12px; padding:10px 12px; font-size:16px; }
+    .row { display:flex; gap:8px; align-items:center; }
+    .btn { border:1px solid var(--br); background:#fff; border-radius:12px; padding:10px 14px; font-size:15px; cursor:pointer; }
+    .btn:hover { background:#f1f5f9; }
+    .zones { height:210px; overflow:auto; border:1px solid var(--br); border-radius:12px; }
+    .zones button { display:block; width:100%; border:0; background:transparent; text-align:left; padding:10px 12px; font-size:14px; cursor:pointer; }
+    .zones button:hover { background:#f8fafc; }
+    .zones button.active { background:#eef2ff; font-weight:600; }
+    .muted { color:var(--muted); font-size:13px; }
+    .big { font-size:20px; font-weight:700; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .break { word-break:break-all; }
+    .warn { color:#b91c1c; }
+    .tabs { display:flex; gap:8px; margin:6px 0 8px; }
+    .tab { padding:6px 10px; border:1px solid var(--br); border-radius:999px; cursor:pointer; font-size:13px; user-select:none; }
+    .tab.active { background:#eef2ff; font-weight:600; }
+    .hidden { display:none; }
+    .actions { position:sticky; bottom:0; background:rgba(248,250,252,.88); backdrop-filter:saturate(1.2) blur(6px); padding:10px; border-top:1px solid var(--br); display:flex; gap:8px; justify-content:flex-end; border-radius:0 0 16px 16px; }
+    .badge { display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#1f2a6b; font-size:12px; margin-left:6px; }
+    .chip { display:inline-block; padding:2px 8px; border-radius:999px; background:#e2e8f0; color:#0f172a; font-size:12px; }
+    .picker { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .picker .field { min-width:96px; flex:1; }
+    .sep { padding:0 4px; font-weight:700; color:#334155; }
+    .timewrap { display:flex; gap:8px; align-items:center; margin-top:8px; }
+    .timewrap .field { width:110px; }
+    @media (max-width:799px){
+      .wrap { padding:10px; }
+      input, select, .btn { min-height:44px; }
+      .zones { height:240px; }
+      .picker .field { min-width:88px; }
+    }
+    .count { font-size:14px; color:#334155; margin-top:6px; }
+    .count strong { font-weight:700; }
+  
+  .header-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+  }
+  .header-main{
+    max-width: calc(100% - 160px);
+  }
+  .support-btn{
+    min-width: 150px;
+    align-self:flex-start;
+    animation:supportGlow 8s ease-in-out infinite;
+    background-image: linear-gradient(120deg,
+      rgba(255,255,255,0.06),
+      rgba(147,197,253,0.18),
+      rgba(244,114,182,0.18),
+      rgba(255,255,255,0.06)
+    );
+    background-size:200% 200%;
+  }
+  @keyframes supportGlow{
+    0%{ background-position:0% 50%; box-shadow:0 0 0 0 rgba(244,114,182,0.0);}
+    50%{ background-position:100% 50%; box-shadow:0 0 18px 0 rgba(147,197,253,0.18);}
+    100%{ background-position:0% 50%; box-shadow:0 0 0 0 rgba(244,114,182,0.0);}
+  }
+
+</style></style>
+</head>
+<body>
+  <main class="wrap">
+        <header class="section header-top">
+      <div class="header-main">
+        <h1 id="title">Калькулятор времени: UTC → ваш часовой пояс</h1>
+        <div id="note" class="note">Введите дату и время события п...естное время. Учёт летнего/зимнего времени автоматический.</div>
+      </div>
+      <button class="btn support-btn" id="btnSupport"></button>
+    </header>
+
+    <section class="section">
+      <div class="title" id="title_conv">Конвертация</div>
+      <div class="grid2">
+        <div class="card">
+          <label id="label_input">Время события (UTC)</label>
+          <div class="tabs">
+            <div id="tabPicker" class="tab active">Прокрутка</div>
+            <div id="tabText" class="tab">Ввод</div>
+          </div>
+
+          <div id="pickerBox">
+            <div id="datePicker" class="picker"></div>
+            <div class="timewrap">
+              <div class="field"><select id="hh"></select></div>
+              <span>:</span>
+              <div class="field"><select id="mm"></select></div>
+            </div>
+            <p class="muted" id="hint_picker">Дата/время трактуются как UTC.</p>
+          </div>
+
+          <div id="textBox" class="hidden">
+            <input id="utcInput" type="text" inputmode="numeric" placeholder="01.12.2025 18:30" />
+            <p id="hint_input" class="muted">Формат: <span id="fmtBadge" class="badge mono">ДД.ММ.ГГГГ HH:mm</span> (авто по региону). Также принимается ISO <span class="mono">2025-11-05T14:00</span>.</p>
+            <p id="input_err" class="muted warn" style="display:none;"></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <label id="label_result">Результат <span id="tzChip" class="chip"></span></label>
+          <div id="outLocal" class="big" aria-live="polite">—</div>
+          <div id="outTz" class="muted mono"></div>
+          <div class="muted" style="margin-top:6px;"><span id="label_now">Текущее время:</span> <span id="outNow"></span></div>
+          <div id="countdown" class="count"></div>
+          <div class="actions">
+            <button class="btn" id="btnRefresh"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="title" id="title_setup">Настройки</div>
+      <div class="grid3">
+        <div class="card">
+          <label id="label_tz">Ваш часовой пояс <span id="tzCurrent" class="chip"></span></label>
+          <div class="row" style="margin-bottom:8px;">
+            <input id="tzSearch" type="text" placeholder="Поиск (Europe/Moscow, America/New_York…)" />
+            <button class="btn" id="btnAuto">Авто</button>
+          </div>
+          <div class="zones" id="zoneList"></div>
+        </div>
+
+        <div class="card">
+          <label id="label_lang">Язык интерфейса</label>
+          <select id="lang">
+            <option value="ru">🇷🇺 Русский</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="nl">🇳🇱 Nederlands</option>
+	    <option value="de">🇩🇪 Deutsch</option>
+  	    <option value="fr">🇫🇷 Français</option>
+ 	    <option value="pt">🇧🇷 Português</option>
+  	    <option value="ko">🇰🇷 한국어</option>
+  	    <option value="ar">🇸🇦 العربية</option>
+          </select>
+          <p class="muted" id="hint_lang">Текстовые подписи и формат вывода меняются по языку.</p>
+        </div>
+
+        <div class="card">
+          <label id="label_df">Формат даты (ввод/прокрутка)</label>
+          <select id="dateFormat">
+            <option value="auto" id="df_auto">Авто (по языку интерфейса)</option>
+            <option value="MDY">MM/DD/YYYY</option>
+            <option value="DMY">DD/MM/YYYY</option>
+            <option value="D.M.Y">DD.MM.YYYY</option>
+            <option value="YMD">YYYY-MM-DD</option>
+          </select>
+          <p class="muted" id="hint_df">Выбор влияет и на поле «Ввод», и на «Прокрутку».</p>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+
+  <script>
+
+  // Helper to get element by id
+  function $(id){ return document.getElementById(id); }
+
+  // Supported languages
+  var SUPPORTED_LANGS = ['ru','en','es','it','nl','de','fr','pt','ko','ar'];
+
+  // Dictionary with UI texts
+  var DICT = {
+    ru: {
+      title: "Калькулятор времени: UTC → ваш часовой пояс",
+      note: "Введите дату и время события по UTC — получите местное время. Учёт летнего/зимнего времени автоматический.",
+      conv: "Конвертация",
+      setup: "Настройки",
+      input_label: "Время события (UTC)",
+      picker_hint: "Дата/время трактуются как UTC.",
+      text_hint: "Формат: {fmt}. Также принимается ISO 2025-11-05T14:00.",
+      text_err: "Введите корректную дату/время в формате {fmt} (UTC).",
+      tz_label: "Ваш часовой пояс",
+      search_placeholder: "Поиск (Europe/Moscow, America/New_York…)",
+      auto_btn: "Авто",
+      result: "Результат",
+      current_time: "Текущее время:",
+      share: "Поделиться",
+      lang_label: "Язык интерфейса",
+      lang_hint: "Текстовые подписи и формат вывода меняются по языку.",
+      df_label: "Формат даты (ввод/прокрутка)",
+      df_hint: "Выбор влияет и на поле «Ввод», и на «Прокрутку».",
+      tab_picker: "Прокрутка",
+      tab_text: "Ввод",
+      df_auto: "Авто (по языку интерфейса)",
+      refresh_btn: "Обновить",
+      support_btn: "Поддержать автора",
+      left: "Осталось",
+      passed: "Прошло",
+      now: "Событие прямо сейчас",
+      input_placeholder: "01.12.2025 18:30",
+      unit_d: "д",
+      unit_h: "ч",
+      unit_m: "м",
+      unit_s: "с"
+    },
+    en: {
+      title: "Time Converter: UTC → your time zone",
+      note: "Enter a UTC date and time to see your local time. Daylight saving is handled automatically.",
+      conv: "Conversion",
+      setup: "Settings",
+      input_label: "Event time (UTC)",
+      picker_hint: "Date/time is interpreted as UTC.",
+      text_hint: "Format: {fmt}. ISO 2025-11-05T14:00 is also accepted.",
+      text_err: "Please enter a valid UTC date/time in format {fmt}.",
+      tz_label: "Your time zone",
+      search_placeholder: "Search (Europe/Moscow, America/New_York…)",
+      auto_btn: "Auto",
+      result: "Result",
+      current_time: "Current time:",
+      share: "Share",
+      lang_label: "Interface language",
+      lang_hint: "Labels and output follow the selected language.",
+      df_label: "Date format (input/picker)",
+      df_hint: "Affects both Text and Wheel modes.",
+      tab_picker: "Wheel",
+      tab_text: "Text",
+      df_auto: "Auto (by interface language)",
+      refresh_btn: "Refresh",
+      support_btn: "Support the author",
+      left: "Left",
+      passed: "Passed",
+      now: "Happening now",
+      input_placeholder: "11/05/2025 18:30",
+      unit_d: "d",
+      unit_h: "h",
+      unit_m: "m",
+      unit_s: "s"
+    },
+    es: {
+      title: "Conversor de hora: UTC → tu zona horaria",
+      note: "Introduce una fecha y hora en UTC para ver tu hora local. El horario de verano se aplica automáticamente.",
+      conv: "Conversión",
+      setup: "Ajustes",
+      input_label: "Hora del evento (UTC)",
+      picker_hint: "La fecha y hora se interpretan como UTC.",
+      text_hint: "Formato: {fmt}. También se acepta ISO 2025-11-05T14:00.",
+      text_err: "Introduce una fecha y hora UTC válidas en formato {fmt}.",
+      tz_label: "Tu zona horaria",
+      search_placeholder: "Búsqueda (Europe/Moscow, America/New_York…)",
+      auto_btn: "Auto",
+      result: "Resultado",
+      current_time: "Hora actual:",
+      share: "Compartir",
+      lang_label: "Idioma de la interfaz",
+      lang_hint: "Las etiquetas y el formato siguen el idioma seleccionado.",
+      df_label: "Formato de fecha (texto/rueda)",
+      df_hint: "Afecta tanto al modo Texto como al modo Rueda.",
+      tab_picker: "Rueda",
+      tab_text: "Texto",
+      df_auto: "Auto (según el idioma)",
+      refresh_btn: "Actualizar",
+      support_btn: "Apoyar al autor",
+      left: "Queda",
+      passed: "Pasado",
+      now: "Ahora mismo",
+      input_placeholder: "05/11/2025 18:30",
+      unit_d: "d",
+      unit_h: "h",
+      unit_m: "m",
+      unit_s: "s"
+    },
+    it: {
+      title: "Convertitore orario: UTC → il tuo fuso orario",
+      note: "Inserisci una data e ora in UTC per vedere l'ora locale. L'ora legale è gestita automaticamente.",
+      conv: "Conversione",
+      setup: "Impostazioni",
+      input_label: "Ora dell'evento (UTC)",
+      picker_hint: "La data e l'ora sono interpretate come UTC.",
+      text_hint: "Formato: {fmt}. È accettato anche ISO 2025-11-05T14:00.",
+      text_err: "Inserisci una data/ora UTC valida nel formato {fmt}.",
+      tz_label: "Il tuo fuso orario",
+      search_placeholder: "Ricerca (Europe/Moscow, America/New_York…)",
+      auto_btn: "Auto",
+      result: "Risultato",
+      current_time: "Ora attuale:",
+      share: "Condividi",
+      lang_label: "Lingua dell'interfaccia",
+      lang_hint: "Le etichette e il formato seguono la lingua selezionata.",
+      df_label: "Formato data (testo/ruota)",
+      df_hint: "Influisce sia sulla modalità Testo che sulla modalità Ruota.",
+      tab_picker: "Ruota",
+      tab_text: "Testo",
+      df_auto: "Auto (in base alla lingua)",
+      refresh_btn: "Aggiorna",
+      support_btn: "Sostieni l'autore",
+      left: "Rimanente",
+      passed: "Trascorso",
+      now: "Proprio ora",
+      input_placeholder: "05/11/2025 18:30",
+      unit_d: "g",
+      unit_h: "h",
+      unit_m: "m",
+      unit_s: "s"
+    },
+    nl: {
+      title: "Tijdconverter: UTC → jouw tijdzone",
+      note: "Voer een datum en tijd in UTC in om je lokale tijd te zien. Zomertijd wordt automatisch verwerkt.",
+      conv: "Conversie",
+      setup: "Instellingen",
+      input_label: "Tijdstip van gebeurtenis (UTC)",
+      picker_hint: "Datum/tijd wordt geïnterpreteerd als UTC.",
+      text_hint: "Formaat: {fmt}. ISO 2025-11-05T14:00 wordt ook geaccepteerd.",
+      text_err: "Voer een geldige UTC-datum en -tijd in in het formaat {fmt}.",
+      tz_label: "Jouw tijdzone",
+      search_placeholder: "Zoeken (Europe/Moscow, America/New_York…)",
+      auto_btn: "Auto",
+      result: "Resultaat",
+      current_time: "Huidige tijd:",
+      share: "Delen",
+      lang_label: "Interfacetaal",
+      lang_hint: "Labels en uitvoer volgen de gekozen taal.",
+      df_label: "Datumnotatie (tekst/wiel)",
+      df_hint: "Beïnvloedt zowel Tekst- als Wiel-modus.",
+      tab_picker: "Wiel",
+      tab_text: "Tekst",
+      df_auto: "Auto (volgens taal)",
+      refresh_btn: "Vernieuwen",
+      support_btn: "Auteur steunen",
+      left: "Resterend",
+      passed: "Verlopen",
+      now: "Nu bezig",
+      input_placeholder: "05-11-2025 18:30",
+      unit_d: "d",
+      unit_h: "u",
+      unit_m: "m",
+      unit_s: "s"
+    },
+    de: {
+      title: "Zeitrechner: UTC → deine Zeitzone",
+      note: "Gib einen UTC-Zeitpunkt ein, um deine Ortszeit zu sehen. Die Sommerzeit wird automatisch berücksichtigt.",
+      conv: "Umrechnung",
+      setup: "Einstellungen",
+      input_label: "Ereigniszeit (UTC)",
+      picker_hint: "Datum/Zeit wird als UTC interpretiert.",
+      text_hint: "Format: {fmt}. ISO 2025-11-05T14:00 wird ebenfalls akzeptiert.",
+      text_err: "Bitte gib ein gültiges UTC-Datum/-Uhrzeit im Format {fmt} ein.",
+      tz_label: "Deine Zeitzone",
+      search_placeholder: "Suche (Europe/Moscow, America/New_York…)",
+      auto_btn: "Auto",
+      result: "Ergebnis",
+      current_time: "Aktuelle Zeit:",
+      share: "Teilen",
+      lang_label: "Oberflächensprache",
+      lang_hint: "Beschriftungen und Format richten sich nach der Sprache.",
+      df_label: "Datumsformat (Eingabe/Rad)",
+      df_hint: "Wirkt sich auf Text- und Radmodus aus.",
+      tab_picker: "Rad",
+      tab_text: "Text",
+      df_auto: "Auto (nach Sprache)",
+      refresh_btn: "Aktualisieren",
+      support_btn: "Autor unterstützen",
+      left: "Verbleibend",
+      passed: "Vergangen",
+      now: "Gerade jetzt",
+      input_placeholder: "05.11.2025 18:30",
+      unit_d: "T",
+      unit_h: "Std",
+      unit_m: "Min",
+      unit_s: "Sek"
+    },
+    fr: {
+      title: "Convertisseur de temps : UTC → votre fuseau horaire",
+      note: "Saisissez une date et une heure en UTC pour voir votre heure locale. L'heure d'été est gérée automatiquement.",
+      conv: "Conversion",
+      setup: "Paramètres",
+      input_label: "Heure de l’événement (UTC)",
+      picker_hint: "La date/heure est interprétée comme UTC.",
+      text_hint: "Format : {fmt}. Le format ISO 2025-11-05T14:00 est également accepté.",
+      text_err: "Veuillez saisir une date/heure UTC valide au format {fmt}.",
+      tz_label: "Votre fuseau horaire",
+      search_placeholder: "Recherche (Europe/Moscow, America/New_York…)",
+      auto_btn: "Auto",
+      result: "Résultat",
+      current_time: "Heure actuelle :",
+      share: "Partager",
+      lang_label: "Langue de l’interface",
+      lang_hint: "Les libellés et le format s’adaptent à la langue.",
+      df_label: "Format de date (saisie/roue)",
+      df_hint: "Affecte les modes Saisie et Roue.",
+      tab_picker: "Roue",
+      tab_text: "Texte",
+      df_auto: "Auto (selon la langue)",
+      refresh_btn: "Actualiser",
+      support_btn: "Soutenir l’auteur",
+      left: "Restant",
+      passed: "Écoulé",
+      now: "En ce moment",
+      input_placeholder: "05/11/2025 18:30",
+      unit_d: "j",
+      unit_h: "h",
+      unit_m: "min",
+      unit_s: "s"
+    },
+    pt: {
+      title: "Conversor de horário: UTC → seu fuso horário",
+      note: "Insira uma data e hora em UTC para ver seu horário local. O horário de verão é tratado automaticamente.",
+      conv: "Conversão",
+      setup: "Configurações",
+      input_label: "Horário do evento (UTC)",
+      picker_hint: "A data/hora é interpretada como UTC.",
+      text_hint: "Formato: {fmt}. Também é aceito ISO 2025-11-05T14:00.",
+      text_err: "Insira uma data/hora UTC válida no formato {fmt}.",
+      tz_label: "Seu fuso horário",
+      search_placeholder: "Pesquisa (Europe/Moscow, America/New_York…)",
+      auto_btn: "Auto",
+      result: "Resultado",
+      current_time: "Horário atual:",
+      share: "Compartilhar",
+      lang_label: "Idioma da interface",
+      lang_hint: "Os rótulos e o formato seguem o idioma escolhido.",
+      df_label: "Formato de data (texto/roda)",
+      df_hint: "Afeta os modos Texto e Roda.",
+      tab_picker: "Roda",
+      tab_text: "Texto",
+      df_auto: "Auto (conforme idioma)",
+      refresh_btn: "Atualizar",
+      support_btn: "Apoiar o autor",
+      left: "Restante",
+      passed: "Decorrido",
+      now: "Acontecendo agora",
+      input_placeholder: "05/11/2025 18:30",
+      unit_d: "d",
+      unit_h: "h",
+      unit_m: "min",
+      unit_s: "s"
+    },
+    ko: {
+      title: "시간 변환기: UTC → 내 시간대",
+      note: "UTC 기준 날짜와 시간을 입력하면 내 지역 시간을 확인할 수 있습니다. 서머타임은 자동으로 적용됩니다.",
+      conv: "변환",
+      setup: "설정",
+      input_label: "이벤트 시간 (UTC)",
+      picker_hint: "날짜/시간은 UTC 기준으로 해석됩니다.",
+      text_hint: "형식: {fmt}. ISO 2025-11-05T14:00 도 허용됩니다.",
+      text_err: "UTC 날짜와 시간을 {fmt} 형식으로 올바르게 입력해 주세요.",
+      tz_label: "내 시간대",
+      search_placeholder: "검색 (Europe/Moscow, America/New_York…)",
+      auto_btn: "자동",
+      result: "결과",
+      current_time: "현재 시간:",
+      share: "공유",
+      lang_label: "인터페이스 언어",
+      lang_hint: "레이블과 출력 형식은 선택한 언어를 따릅니다.",
+      df_label: "날짜 형식 (텍스트/휠)",
+      df_hint: "텍스트/휠 모드 모두에 적용됩니다.",
+      tab_picker: "휠",
+      tab_text: "텍스트",
+      df_auto: "자동 (언어 기준)",
+      refresh_btn: "새로고침",
+      support_btn: "작성자 후원",
+      left: "남음",
+      passed: "지남",
+      now: "지금 진행 중",
+      input_placeholder: "2025-11-05 18:30",
+      unit_d: "일",
+      unit_h: "시간",
+      unit_m: "분",
+      unit_s: "초"
+    },
+    ar: {
+      title: "محول الوقت: من UTC إلى منطقتك الزمنية",
+      note: "أدخل التاريخ والوقت بتوقيت UTC لمعرفة الوقت المحلي. يتم تطبيق التوقيت الصيفي تلقائيًا.",
+      conv: "التحويل",
+      setup: "الإعدادات",
+      input_label: "وقت الحدث (UTC)",
+      picker_hint: "يتم تفسير التاريخ/الوقت على أنه بتوقيت UTC.",
+      text_hint: "التنسيق: {fmt}. يتم قبول ISO 2025-11-05T14:00 أيضًا.",
+      text_err: "يرجى إدخال تاريخ/وقت UTC صالح بالتنسيق {fmt}.",
+      tz_label: "منطقتك الزمنية",
+      search_placeholder: "بحث (Europe/Moscow, America/New_York…)",
+      auto_btn: "تلقائي",
+      result: "النتيجة",
+      current_time: "الوقت الحالي:",
+      share: "مشاركة",
+      lang_label: "لغة الواجهة",
+      lang_hint: "تتبع التسميات والتنسيق اللغة المحددة.",
+      df_label: "تنسيق التاريخ (نص/عجلة)",
+      df_hint: "يؤثر على وضعي النص والعجلة.",
+      tab_picker: "عجلة",
+      tab_text: "نص",
+      df_auto: "تلقائي (حسب اللغة)",
+      refresh_btn: "تحديث",
+      support_btn: "دعم المؤلف",
+      left: "المتبقي",
+      passed: "المنقضي",
+      now: "يحدث الآن",
+      input_placeholder: "2025-11-05 18:30",
+      unit_d: "يوم",
+      unit_h: "ساعة",
+      unit_m: "دقيقة",
+      unit_s: "ثانية"
+    }
+  };
+
+  // Fallback for other languages: use English texts
+  function getTexts(lang){
+    if (DICT[lang]) return DICT[lang];
+    return DICT['en'];
+  }
+
+  // State
+  var state = {
+    lang: getInitialLang(),
+    tz: getUserTZ(),
+    mode: "picker",
+    dateFormat: "auto", // 'auto','MDY','DMY','D.M.Y','YMD'
+    utcDate: null
+  };
+
+  // Initial language detection
+  function getInitialLang(){
+    try{
+      var url = String(window.location.href);
+      var qIndex = url.indexOf("?");
+      if (qIndex !== -1){
+        var qs = url.substring(qIndex+1).split("&");
+        for (var i=0;i<qs.length;i++){
+          var kv = qs[i].split("=");
+          if (kv[0] === "lang"){
+            var v = decodeURIComponent(kv[1] || "").toLowerCase();
+            if (SUPPORTED_LANGS.indexOf(v) !== -1) return v;
+          }
+        }
+      }
+    }catch(e){}
+    try{
+      var stored = window.localStorage.getItem("calc_lang");
+      if (stored && SUPPORTED_LANGS.indexOf(stored) !== -1) return stored;
+    }catch(e){}
+    if (navigator && navigator.language){
+      var base = navigator.language.toLowerCase().split("-")[0];
+      if (SUPPORTED_LANGS.indexOf(base) !== -1) return base;
+    }
+    return "ru";
+  }
+
+  // Time zone helpers
+  function getUserTZ(){
+    try{
+      if (typeof Intl === "object" && Intl.DateTimeFormat){
+        var z = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (z) return z;
+      }
+    }catch(e){}
+    return "UTC";
+  }
+
+  function getAllZones(){
+    try{
+      if (typeof Intl === "object" && typeof Intl.supportedValuesOf === "function"){
+        return Intl.supportedValuesOf("timeZone");
+      }
+    }catch(e){}
+    // Fallback set
+    return [
+      "UTC",
+      "Europe/Moscow","Europe/London","Europe/Berlin","Europe/Paris",
+      "America/New_York","America/Chicago","America/Denver","America/Los_Angeles",
+      "Asia/Tokyo","Asia/Shanghai","Asia/Dubai","Australia/Sydney"
+    ];
+  }
+
+  function formatIsoUtcMin(date){
+    function pad2(n){ var s=String(n); return s.length<2 ? "0"+s : s; }
+    var y = date.getUTCFullYear();
+    var m = pad2(date.getUTCMonth()+1);
+    var d = pad2(date.getUTCDate());
+    var hh = pad2(date.getUTCHours());
+    var mm = pad2(date.getUTCMinutes());
+    return y + "-" + m + "-" + d + "T" + hh + ":" + mm;
+  }
+
+  // Parse text input according to selected format
+  function getActiveDf(){
+    var sel = $("dateFormat");
+    var val = sel ? sel.value : "auto";
+    if (!val || val === "auto"){
+      var lang = state.lang;
+      if (lang === "en") return "MDY";
+      if (lang === "ko" || lang === "ar") return "YMD";
+      if (lang === "ru" || lang === "de") return "D.M.Y";
+      // for most others use DMY (DD/MM/YYYY)
+      return "DMY";
+    }
+    return val;
+  }
+
+  // Автоформатирование ввода по текущему формату даты
+  function maskInputByFormat(raw){
+    if (!raw) return "";
+    // оставляем только цифры, максимум 12 (DDMMYYYYHHMM или подобное)
+    var d = String(raw).replace(/\D/g, "");
+    if (d.length > 12) d = d.slice(0, 12);
+    var l = d.length;
+    var df = getActiveDf();
+    var s = "";
+
+    function sub(a, b){
+      return d.slice(a, b);
+    }
+
+    if (df === "MDY"){
+      // MM/DD/YYYY HH:MM
+      if (l <= 2) return d;
+      s = sub(0,2);
+      if (l <= 4){
+        s += "/" + sub(2);
+        return s;
+      }
+      s += "/" + sub(2,4);
+      if (l <= 8){
+        s += "/" + sub(4);
+        return s;
+      }
+      s += "/" + sub(4,8);
+      if (l <= 10){
+        s += " " + sub(8);
+        return s;
+      }
+      s += " " + sub(8,10);
+      if (l <= 12){
+        s += ":" + sub(10);
+        return s;
+      }
+      return s;
+    } else if (df === "YMD"){
+      // YYYY-MM-DD HH:MM
+      if (l <= 4) return d;
+      s = sub(0,4);
+      if (l <= 6){
+        s += "-" + sub(4);
+        return s;
+      }
+      s += "-" + sub(4,6);
+      if (l <= 8){
+        s += "-" + sub(6);
+        return s;
+      }
+      s += "-" + sub(6,8);
+      if (l <= 10){
+        s += " " + sub(8);
+        return s;
+      }
+      s += " " + sub(8,10);
+      if (l <= 12){
+        s += ":" + sub(10);
+        return s;
+      }
+      return s;
+    } else if (df === "D.M.Y"){
+      // DD.MM.YYYY HH:MM
+      if (l <= 2) return d;
+      s = sub(0,2);
+      if (l <= 4){
+        s += "." + sub(2);
+        return s;
+      }
+      s += "." + sub(2,4);
+      if (l <= 8){
+        s += "." + sub(4);
+        return s;
+      }
+      s += "." + sub(4,8);
+      if (l <= 10){
+        s += " " + sub(8);
+        return s;
+      }
+      s += " " + sub(8,10);
+      if (l <= 12){
+        s += ":" + sub(10);
+        return s;
+      }
+      return s;
+    } else {
+      // DMY по умолчанию: DD/MM/YYYY HH:MM
+      if (l <= 2) return d;
+      s = sub(0,2);
+      if (l <= 4){
+        s += "/" + sub(2);
+        return s;
+      }
+      s += "/" + sub(2,4);
+      if (l <= 8){
+        s += "/" + sub(4);
+        return s;
+      }
+      s += "/" + sub(4,8);
+      if (l <= 10){
+        s += " " + sub(8);
+        return s;
+      }
+      s += " " + sub(8,10);
+      if (l <= 12){
+        s += ":" + sub(10);
+        return s;
+      }
+      return s;
+    }
+  }
+
+
+  function parseByFormat(str){
+    if (!str){ return null; }
+    str = String(str).trim();
+    if (!str){ return null; }
+
+    // ISO-стиль с 'T'
+    var mIso = /^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2})$/.exec(str);
+    if (mIso){
+      var yI = parseInt(mIso[1],10);
+      var moI = parseInt(mIso[2],10)-1;
+      var dI = parseInt(mIso[3],10);
+      var hI = parseInt(mIso[4],10);
+      var miI = parseInt(mIso[5],10);
+      return new Date(Date.UTC(yI,moI,dI,hI,miI,0,0));
+    }
+
+    var parts = str.split(/\s+/);
+    if (parts.length < 2) return null;
+    var datePart = parts[0];
+    var timePart = parts[1];
+    var tm = timePart.split(":");
+    if (tm.length < 2) return null;
+    var hh = parseInt(tm[0],10);
+    var mm = parseInt(tm[1],10);
+    if (isNaN(hh) || isNaN(mm)) return null;
+
+    var df = getActiveDf();
+    var DD="",MM="",YYYY="";
+    if (df === "MDY"){
+      var a = datePart.split("/");
+      DD = a[1]; MM = a[0]; YYYY = a[2];
+    } else if (df === "DMY"){
+      var b = datePart.split("/");
+      DD = b[0]; MM = b[1]; YYYY = b[2];
+    } else if (df === "D.M.Y"){
+      var c = datePart.split(".");
+      DD = c[0]; MM = c[1]; YYYY = c[2];
+    } else if (df === "YMD"){
+      var d = datePart.split("-");
+      YYYY = d[0]; MM = d[1]; DD = d[2];
+    } else {
+      // fallback: try DMY with dots or slashes
+      var e = datePart.indexOf(".") !== -1 ? datePart.split(".") : datePart.split("/");
+      DD = e[0]; MM = e[1]; YYYY = e[2];
+    }
+
+    var y = parseInt(YYYY,10);
+    var mo = parseInt(MM,10);
+    var da = parseInt(DD,10);
+    if (isNaN(y) || isNaN(mo) || isNaN(da)) return null;
+    return new Date(Date.UTC(y,(mo||1)-1,da||1,hh||0,mm||0,0,0));
+  }
+
+  function formatInTZ(dateUtc, tz, lang){
+    if (!dateUtc) return "—";
+    // pick locale by language
+    var locale;
+    switch(lang){
+      case "ru": locale = "ru-RU"; break;
+      case "en": locale = "en-US"; break;
+      case "es": locale = "es-ES"; break;
+      case "it": locale = "it-IT"; break;
+      case "nl": locale = "nl-NL"; break;
+      case "de": locale = "de-DE"; break;
+      case "fr": locale = "fr-FR"; break;
+      case "pt": locale = "pt-PT"; break;
+      case "ko": locale = "ko-KR"; break;
+      case "ar": locale = "ar-AE"; break;
+      default: locale = (lang === "ru" ? "ru-RU" : "en-US");
+    }
+    try{
+      var opts = {
+        weekday: "short",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZoneName: "short"
+      };
+      if (tz !== "local"){
+        opts.timeZone = tz;
+      }
+      var s = new Intl.DateTimeFormat(locale, opts).format(dateUtc);
+      // Небольшой твик для русского: вместо "г., 13:00" → "г. в 13:00"
+      if (lang === "ru"){
+        s = s.replace(" г., ", " г. в ");
+      }
+      return s;
+    }catch(e){
+      // Fallback — старое простое поведение
+      try{
+        if (tz === "local"){
+          return dateUtc.toLocaleString(locale);
+        }
+        if (typeof Intl === "object" && typeof Intl.DateTimeFormat === "function"){
+          var fmt = new Intl.DateTimeFormat(locale, {
+            timeZone: tz,
+            year: "numeric", month: "2-digit", day: "2-digit",
+            hour: "2-digit", minute: "2-digit"
+          });
+          return fmt.format(dateUtc);
+        }
+      }catch(e2){}
+      return dateUtc.toUTCString();
+    }
+  }
+
+  function updateTexts(){
+    var t = getTexts(state.lang);
+
+    if ($("title")) $("title").textContent = t.title;
+    document.title = t.title;
+    if ($("note")) $("note").textContent = t.note;
+    if ($("title_conv")) $("title_conv").textContent = t.conv;
+    if ($("title_setup")) $("title_setup").textContent = t.setup;
+    if ($("label_input")) $("label_input").textContent = t.input_label;
+    if ($("hint_picker")) $("hint_picker").textContent = t.picker_hint;
+    if ($("hint_input")){
+      var fmt;
+      var df = getActiveDf();
+      if (df === "MDY") fmt = "MM/DD/YYYY HH:MM";
+      else if (df === "DMY") fmt = "DD/MM/YYYY HH:MM";
+      else if (df === "D.M.Y") fmt = "DD.MM.YYYY HH:MM";
+      else if (df === "YMD") fmt = "YYYY-MM-DD HH:MM";
+      else fmt = "DD.MM.YYYY HH:MM";
+      $("hint_input").textContent = t.text_hint.replace("{fmt}", fmt);
+    }
+    if ($("label_tz")) $("label_tz").firstChild.nodeValue = t.tz_label + " ";
+    if ($("tzSearch")) $("tzSearch").placeholder = t.search_placeholder;
+    if ($("btnAuto")) $("btnAuto").textContent = t.auto_btn;
+    if ($("label_result")) $("label_result").firstChild.nodeValue = t.result + " ";
+    if ($("label_now")) $("label_now").textContent = t.current_time;
+    if ($("label_lang")) $("label_lang").textContent = t.lang_label;
+    if ($("hint_lang")) $("hint_lang").textContent = t.lang_hint;
+    if ($("label_df")) $("label_df").textContent = t.df_label;
+    if ($("hint_df")) $("hint_df").textContent = t.df_hint;
+    if ($("df_auto")) $("df_auto").textContent = t.df_auto;
+    if ($("tabPicker")) $("tabPicker").textContent = t.tab_picker;
+    if ($("tabText")) $("tabText").textContent = t.tab_text;
+    if ($("btnRefresh")) $("btnRefresh").textContent = t.refresh_btn;
+    if ($("btnSupport")) $("btnSupport").textContent = t.support_btn;
+    if ($("utcInput")) $("utcInput").placeholder = t.input_placeholder || "2025-11-05 14:00";
+    // при смене языка/формата пересоздаём контролы прокрутки под новый формат
+    if (typeof initPickerControls === "function"){
+      initPickerControls();
+    }
+  }
+
+  function renderZones(list){
+    var box = $("zoneList");
+    if (!box) return;
+    box.innerHTML = "";
+    for (var i=0;i<list.length;i++){
+      var z = list[i];
+      var b = document.createElement("button");
+      b.textContent = z;
+      if (z === state.tz) b.className = "active";
+      b.addEventListener("click", (function(zone){
+        return function(){
+          state.tz = zone;
+          try { window.localStorage.setItem("calc_tz", zone); } catch(e){}
+          updateTZLabels();
+          refreshZones();
+          renderOutput();
+        };
+      })(z));
+      box.appendChild(b);
+    }
+  }
+
+  function refreshZones(){
+    var all = getAllZones();
+    var q = "";
+    if ($("tzSearch")) q = $("tzSearch").value.toLowerCase();
+    var out = [];
+    for (var i=0;i<all.length;i++){
+      var z = all[i];
+      if (!q || z.toLowerCase().indexOf(q) !== -1){
+        out.push(z);
+      }
+    }
+    // Ensure current tz is first
+    var result = [];
+    if (out.indexOf(state.tz) !== -1){
+      result.push(state.tz);
+      for (var j=0;j<out.length;j++){
+        if (out[j] !== state.tz) result.push(out[j]);
+      }
+    } else {
+      result = out;
+    }
+    renderZones(result);
+  }
+
+  function updateTZLabels(){
+    if ($("tzCurrent")) $("tzCurrent").textContent = state.tz;
+    if ($("tzChip")) $("tzChip").textContent = state.tz;
+  }
+
+  function renderOutput(){
+    var t = getTexts(state.lang);
+    var outLocal = $("outLocal");
+    var outTz = $("outTz");
+    var cd = $("countdown");
+    var err = $("input_err");
+
+    if (!state.utcDate){
+      if (outLocal) outLocal.textContent = "—";
+      if (outTz) outTz.textContent = "";
+      if (cd) cd.textContent = "";
+      if (err) err.style.display = "none";
+      updateShare();
+      return;
+    }
+
+    if (err) err.style.display = "none";
+
+    var localStr = formatInTZ(state.utcDate, state.tz, state.lang);
+    if (outLocal) outLocal.textContent = localStr;
+    if (outTz){
+      // вторая строка: просто идентификатор часового пояса
+      var tzLabel = state.tz;
+      if (tzLabel === "local"){
+        try{
+          tzLabel = Intl.DateTimeFormat().resolvedOptions().timeZone || "local";
+        }catch(e){
+          tzLabel = "local";
+        }
+      }
+      outTz.textContent = tzLabel;
+    }
+
+    // countdown relative to now (real now in same TZ display, but diff only uses UTC)
+    if (cd){
+      var now = new Date();
+      var diff = Math.floor((state.utcDate.getTime() - now.getTime())/1000);
+      if (Math.abs(diff) < 1){
+        cd.textContent = t.now;
+      } else {
+        var past = diff < 0;
+        if (past) diff = -diff;
+        var dd = Math.floor(diff/86400); diff %= 86400;
+        var hh = Math.floor(diff/3600); diff %= 3600;
+        var mm = Math.floor(diff/60); var ss = diff % 60;
+        var unit_d = t.unit_d || "d";
+        var unit_h = t.unit_h || "h";
+        var unit_m = t.unit_m || "m";
+        var unit_s = t.unit_s || "s";
+        var parts = [];
+        if (dd) parts.push(dd + " " + unit_d);
+        if (hh || dd) parts.push((hh<10?"0":"") + hh + " " + unit_h);
+        parts.push((mm<10?"0":"") + mm + " " + unit_m);
+        parts.push((ss<10?"0":"") + ss + " " + unit_s);
+        cd.textContent = (past ? t.passed : t.left) + ": " + parts.join(" ");
+      }
+    }
+
+    updateShare();
+  }
+
+  function updateShare(){
+    var box = $("share");
+    if (!box){ return; }
+    if (!state.utcDate){
+      box.textContent = "";
+      return;
+    }
+    var base;
+    try{
+      if (window.location && window.location.origin){
+        base = window.location.origin + window.location.pathname;
+      } else {
+        base = window.location.pathname || "";
+      }
+    }catch(e){
+      base = "";
+    }
+    var params = [];
+    params.push("lang=" + encodeURIComponent(state.lang));
+    params.push("tz=" + encodeURIComponent(state.tz));
+    params.push("mode=" + encodeURIComponent(state.mode));
+    params.push("df=" + encodeURIComponent(state.dateFormat));
+    params.push("utc=" + encodeURIComponent(formatIsoUtcMin(state.utcDate)));
+    box.textContent = base + "?" + params.join("&");
+  }
+
+  function onTextInputChange(){
+    var input = $("utcInput");
+    var t = getTexts(state.lang);
+    var err = $("input_err");
+    var val = input ? input.value : "";
+
+    // автоформатирование по текущему формату
+    if (input){
+      var masked = maskInputByFormat(val);
+      if (masked !== val){
+        input.value = masked;
+        val = masked;
+      }
+    }
+
+    var d = parseByFormat(val);
+    if (!d){
+      state.utcDate = null;
+      if (val && err){
+        err.style.display = "block";
+        var df = getActiveDf();
+        var fmt;
+        if (df === "MDY") fmt = "MM/DD/YYYY HH:MM";
+        else if (df === "DMY") fmt = "DD/MM/YYYY HH:MM";
+        else if (df === "D.M.Y") fmt = "DD.MM.YYYY HH:MM";
+        else if (df === "YMD") fmt = "YYYY-MM-DD HH:MM";
+        else fmt = "DD.MM.YYYY HH:MM";
+        err.textContent = t.text_err.replace("{fmt}", fmt);
+      } else if (err){
+        err.style.display = "none";
+      }
+      renderOutput();
+      return;
+    }
+    state.utcDate = d;
+    if (err) err.style.display = "none";
+    renderOutput();
+  }
+
+function onPickerChange(){
+    var selDay = $("selDay");
+    var selMon = $("selMon");
+    var selYear = $("selYear");
+    if (!selDay || !selMon || !selYear){
+      renderOutput();
+      return;
+    }
+    var day = parseInt(selDay.value || "1", 10);
+    var month = parseInt(selMon.value || "1", 10);
+    var year = parseInt(selYear.value || "1970", 10);
+    if (isNaN(year) || isNaN(month) || isNaN(day)){
+      state.utcDate = null;
+      renderOutput();
+      return;
+    }
+    var hhSel = $("hh");
+    var mmSel = $("mm");
+    var hh = hhSel ? parseInt(hhSel.value||"0",10) : 0;
+    var mm = mmSel ? parseInt(mmSel.value||"0",10) : 0;
+    if (isNaN(hh)) hh = 0;
+    if (isNaN(mm)) mm = 0;
+    state.utcDate = new Date(Date.UTC(year, month-1, day, hh, mm, 0, 0));
+    renderOutput();
+  }
+
+  function onLangChange(){
+    var v = $("lang").value;
+    if (SUPPORTED_LANGS.indexOf(v) === -1){
+      state.lang = "en";
+    } else {
+      state.lang = v;
+    }
+    try{ window.localStorage.setItem("calc_lang", state.lang); }catch(e){}
+    updateTexts();
+    renderOutput();
+  }
+
+  function onDfChange(){
+    var sel = $("dateFormat");
+    if (!sel) return;
+    state.dateFormat = sel.value || "auto";
+    updateTexts();
+    renderOutput();
+  }
+
+  function onModeChange(mode){
+    state.mode = mode;
+    var tabP = $("tabPicker");
+    var tabT = $("tabText");
+    var boxP = $("pickerBox");
+    var boxT = $("textBox");
+    if (mode === "picker"){
+      if (tabP) tabP.classList.add("active");
+      if (tabT) tabT.classList.remove("active");
+      if (boxP) boxP.classList.remove("hidden");
+      if (boxT) boxT.classList.add("hidden");
+    } else {
+      if (tabP) tabP.classList.remove("active");
+      if (tabT) tabT.classList.add("active");
+      if (boxP) boxP.classList.add("hidden");
+      if (boxT) boxT.classList.remove("hidden");
+    }
+    renderOutput();
+  }
+
+  function initPickerControls(){
+    var container = $("datePicker");
+    if (container){
+      container.innerHTML = "";
+      var df = getActiveDf();
+
+      var selDay = document.createElement("select");
+      selDay.id = "selDay";
+      selDay.className = "field";
+
+      var selMon = document.createElement("select");
+      selMon.id = "selMon";
+      selMon.className = "field";
+
+      var selYear = document.createElement("select");
+      selYear.id = "selYear";
+      selYear.className = "field";
+
+      for (var d = 1; d <= 31; d++){
+        var oD = document.createElement("option");
+        oD.value = String(d);
+        oD.textContent = d < 10 ? "0"+d : String(d);
+        selDay.appendChild(oD);
+      }
+
+      for (var m = 1; m <= 12; m++){
+        var oM = document.createElement("option");
+        oM.value = String(m);
+        oM.textContent = m < 10 ? "0"+m : String(m);
+        selMon.appendChild(oM);
+      }
+
+      var now = state.utcDate ? new Date(state.utcDate.getTime()) : new Date();
+      var baseYear = now.getUTCFullYear();
+      for (var y = baseYear - 1; y <= baseYear + 5; y++){
+        var oY = document.createElement("option");
+        oY.value = String(y);
+        oY.textContent = String(y);
+        selYear.appendChild(oY);
+      }
+
+      function addSep(txt){
+        var span = document.createElement("span");
+        span.className = "sep";
+        span.textContent = txt;
+        return span;
+      }
+
+      if (df === "MDY"){
+        container.appendChild(selMon);
+        container.appendChild(addSep("/"));
+        container.appendChild(selDay);
+        container.appendChild(addSep("/"));
+        container.appendChild(selYear);
+      } else if (df === "DMY"){
+        container.appendChild(selDay);
+        container.appendChild(addSep("/"));
+        container.appendChild(selMon);
+        container.appendChild(addSep("/"));
+        container.appendChild(selYear);
+      } else if (df === "D.M.Y"){
+        container.appendChild(selDay);
+        container.appendChild(addSep("."));
+        container.appendChild(selMon);
+        container.appendChild(addSep("."));
+        container.appendChild(selYear);
+      } else if (df === "YMD"){
+        container.appendChild(selYear);
+        container.appendChild(addSep("-"));
+        container.appendChild(selMon);
+        container.appendChild(addSep("-"));
+        container.appendChild(selDay);
+      } else {
+        container.appendChild(selDay);
+        container.appendChild(addSep("/"));
+        container.appendChild(selMon);
+        container.appendChild(addSep("/"));
+        container.appendChild(selYear);
+      }
+
+      var base = state.utcDate ? new Date(state.utcDate.getTime()) : new Date();
+      var bY = base.getUTCFullYear();
+      var bM = base.getUTCMonth() + 1;
+      var bD = base.getUTCDate();
+
+      selYear.value = String(bY);
+      selMon.value = String(bM);
+      selDay.value = String(bD);
+
+      selDay.addEventListener("change", onPickerChange);
+      selMon.addEventListener("change", onPickerChange);
+      selYear.addEventListener("change", onPickerChange);
+    }
+
+    var hhSel = $("hh");
+    var mmSel = $("mm");
+    var baseTime = state.utcDate ? new Date(state.utcDate.getTime()) : new Date();
+    var initH = baseTime.getUTCHours();
+    var initM = baseTime.getUTCMinutes();
+
+    if (hhSel){
+      hhSel.innerHTML = "";
+      for (var h=0;h<24;h++){
+        var optH = document.createElement("option");
+        var sH = (h<10?"0":"")+h;
+        optH.value = sH;
+        optH.textContent = sH;
+        if (h === initH) optH.selected = true;
+        hhSel.appendChild(optH);
+      }
+      hhSel.addEventListener("change", onPickerChange);
+    }
+    if (mmSel){
+      mmSel.innerHTML = "";
+      for (var m=0;m<60;m+=5){
+        var optM = document.createElement("option");
+        var sM = (m<10?"0":"")+m;
+        optM.value = sM;
+        optM.textContent = sM;
+        if (m === initM) optM.selected = true;
+        mmSel.appendChild(optM);
+      }
+      mmSel.addEventListener("change", onPickerChange);
+    }
+  }
+
+  function initZones(){
+    var storedTz = null;
+    try{
+      storedTz = window.localStorage.getItem("calc_tz");
+    }catch(e){}
+    if (storedTz){
+      state.tz = storedTz;
+    }
+    updateTZLabels();
+    refreshZones();
+    if ($("tzSearch")){
+      $("tzSearch").addEventListener("input", function(){ refreshZones(); });
+    }
+    if ($("btnAuto")){
+      $("btnAuto").addEventListener("click", function(){
+        state.tz = getUserTZ();
+        try{ window.localStorage.setItem("calc_tz", state.tz); }catch(e){}
+        updateTZLabels();
+        refreshZones();
+        renderOutput();
+      });
+    }
+  }
+
+  function initNowTimer(){
+    function tick(){
+      var t = getTexts(state.lang);
+      if ($("label_now")) $("label_now").textContent = t.current_time;
+      if ($("outNow")){
+        var now = new Date();
+        $("outNow").textContent = formatInTZ(now, state.tz, state.lang);
+      }
+      // countdown is already relative to state.utcDate in renderOutput, but we can refresh too
+      renderOutput();
+    }
+    tick();
+    window.setInterval(tick, 1000);
+  }
+
+  function init(){
+    // Wire events
+    if ($("lang")) $("lang").addEventListener("change", onLangChange);
+    if ($("dateFormat")) $("dateFormat").addEventListener("change", onDfChange);
+    if ($("utcInput")) $("utcInput").addEventListener("input", onTextInputChange);
+    if ($("tabPicker")) $("tabPicker").addEventListener("click", function(){ onModeChange("picker"); });
+    if ($("tabText")) $("tabText").addEventListener("click", function(){ onModeChange("text"); });
+    if ($("btnRefresh")) $("btnRefresh").addEventListener("click", function(){
+      renderOutput();
+      initNowTimer();
+    });
+    // Support button (заглушка — пользователь потом подставит ссылку)
+    if ($("btnSupport")) $("btnSupport").addEventListener("click", function(){
+      var url = "https://yoomoney.ru/";
+      try{ window.open(url, "_blank"); }catch(e){}
+    });
+
+    // initial UX
+    if ($("lang")) $("lang").value = state.lang;
+    if ($("dateFormat")) $("dateFormat").value = state.dateFormat;
+    updateTexts();
+    initPickerControls();
+    initZones();
+    onModeChange("picker");
+    initNowTimer();
+  }
+
+  // Run init asap
+  init();
+
+  </script>
+<footer class="section" style="font-size:12px; color:#9ca3af; margin-top:16px; text-align:center;">
+  <span>© 2025 Калькулятор времени UTC</span>
+  ·
+  <a href="offer_prodamus_samozanyataya.html"
+     target="_blank"
+     rel="noopener noreferrer"
+     style="color:#9ca3af; text-decoration:underline;">
+    Публичная оферта
+  </a>
+</footer>
+
+</body>
+</html>
