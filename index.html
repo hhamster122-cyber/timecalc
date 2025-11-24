@@ -1,1328 +1,1683 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Time Converter</title>
+  <meta charset="UTF-8">
+  <title>Загрузка файлов для Александры</title>
   <style>
-    :root { --bg:#f8fafc; --fg:#0f172a; --muted:#64748b; --card:#fff; --br:#e2e8f0; --pri:#4f46e5; }
-    * { box-sizing:border-box; }
-    body { margin:0; font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial; background:var(--bg); color:#0f172a; }
-    .wrap { max-width:960px; margin:0 auto; padding:16px; }
-    h1 { font-size:22px; margin:0 0 6px; }
-    .note { color:var(--muted); margin:0 0 12px; font-size:14px; }
-    .section { margin:12px 0; }
-    .title { font-weight:700; margin:0 0 8px; font-size:15px; text-transform:uppercase; letter-spacing:.02em; color:#334155; }
-    .grid2 { display:grid; gap:12px; grid-template-columns:1fr; }
-    .grid3 { display:grid; gap:12px; grid-template-columns:1fr; }
-    @media (min-width:800px){ .grid2{ grid-template-columns:1.2fr 1fr; } .grid3{ grid-template-columns:1fr 1fr 1fr; } }
-    .card { background:var(--card); border:1px solid var(--br); border-radius:16px; padding:12px; }
-    label { display:block; font-weight:600; margin:0 0 6px; font-size:14px; }
-    input[type="text"], select { width:100%; border:1px solid var(--br); border-radius:12px; padding:10px 12px; font-size:16px; }
-    .row { display:flex; gap:8px; align-items:center; }
-    .btn { border:1px solid var(--br); background:#fff; border-radius:12px; padding:10px 14px; font-size:15px; cursor:pointer; }
-    .btn:hover { background:#f1f5f9; }
-    .zones { height:210px; overflow:auto; border:1px solid var(--br); border-radius:12px; }
-    .zones button { display:block; width:100%; border:0; background:transparent; text-align:left; padding:10px 12px; font-size:14px; cursor:pointer; }
-    .zones button:hover { background:#f8fafc; }
-    .zones button.active { background:#eef2ff; font-weight:600; }
-    .muted { color:var(--muted); font-size:13px; }
-    .big { font-size:20px; font-weight:700; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-    .break { word-break:break-all; }
-    .warn { color:#b91c1c; }
-    .tabs { display:flex; gap:8px; margin:6px 0 8px; }
-    .tab { padding:6px 10px; border:1px solid var(--br); border-radius:999px; cursor:pointer; font-size:13px; user-select:none; }
-    .tab.active { background:#eef2ff; font-weight:600; }
-    .hidden { display:none; }
-    .actions { position:sticky; bottom:0; background:rgba(248,250,252,.88); backdrop-filter:saturate(1.2) blur(6px); padding:10px; border-top:1px solid var(--br); display:flex; gap:8px; justify-content:flex-end; border-radius:0 0 16px 16px; }
-    .badge { display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#1f2a6b; font-size:12px; margin-left:6px; }
-    .chip { display:inline-block; padding:2px 8px; border-radius:999px; background:#e2e8f0; color:#0f172a; font-size:12px; }
-    .picker { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-    .picker .field { min-width:96px; flex:1; }
-    .sep { padding:0 4px; font-weight:700; color:#334155; }
-    .timewrap { display:flex; gap:8px; align-items:center; margin-top:8px; }
-    .timewrap .field { width:110px; }
-    @media (max-width:799px){
-      .wrap { padding:10px; }
-      input, select, .btn { min-height:44px; }
-      .zones { height:240px; }
-      .picker .field { min-width:88px; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f8;
+      color: #222;
     }
-    .count { font-size:14px; color:#334155; margin-top:6px; }
-    .count strong { font-weight:700; }
-  
-  .header-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:16px;
-  }
-  .header-main{
-    max-width: calc(100% - 160px);
-  }
-  .support-btn{
-    min-width: 150px;
-    align-self:flex-start;
-    animation:supportGlow 8s ease-in-out infinite;
-    background-image: linear-gradient(120deg,
-      rgba(255,255,255,0.06),
-      rgba(147,197,253,0.18),
-      rgba(244,114,182,0.18),
-      rgba(255,255,255,0.06)
-    );
-    background-size:200% 200%;
-  }
-  @keyframes supportGlow{
-    0%{ background-position:0% 50%; box-shadow:0 0 0 0 rgba(244,114,182,0.0);}
-    50%{ background-position:100% 50%; box-shadow:0 0 18px 0 rgba(147,197,253,0.18);}
-    100%{ background-position:0% 50%; box-shadow:0 0 0 0 rgba(244,114,182,0.0);}
-  }
-
-</style></style>
+    header {
+      padding: 12px 20px;
+      background: #ffffff;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .lang-switch button {
+      margin-left: 6px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .lang-switch button.active {
+      background: #222;
+      color: #fff;
+      border-color: #222;
+    }
+    main {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 16px 30px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px 18px 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+    .field-row {
+      margin: 10px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    input[type="file"] {
+      max-width: 100%;
+    }
+    button.primary {
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button.primary:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    .status {
+      margin-top: 8px;
+      font-size: 14px;
+      min-height: 18px;
+    }
+    .progress-bar {
+      margin-top: 10px;
+      width: 100%;
+      height: 14px;
+      background: #eee;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      transition: width 0.1s linear;
+    }
+    .small-text {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+    .errors {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #b91c1c;
+      max-height: 150px;
+      overflow-y: auto;
+      border-top: 1px dashed #fbbf24;
+      padding-top: 6px;
+    }
+    .errors ul {
+      padding-left: 18px;
+      margin: 4px 0;
+    }
+    .errors li {
+      margin: 2px 0;
+      word-break: break-all;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      margin-top: 4px;
+    }
+    .chip span {
+      margin-left: 4px;
+      font-weight: 600;
+    }
+    .game-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .game-tabs button {
+      flex: 1 1 45%;
+      border: 1px solid #ccc;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      background: #f9fafb;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .game-tabs button.active {
+      background: #22c55e;
+      border-color: #16a34a;
+      color: #fff;
+    }
+    #game-container {
+      border-radius: 10px;
+      background: #f9fafb;
+      min-height: 260px;
+      padding: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .game-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    canvas {
+      background: #0f172a;
+      border-radius: 8px;
+      display: block;
+      margin: 6px auto 0;
+    }
+  </style>
 </head>
 <body>
-  <main class="wrap">
-        <header class="section header-top">
-      <div class="header-main">
-        <h1 id="title">Калькулятор времени: UTC → ваш часовой пояс</h1>
-        <div id="note" class="note">Введите дату и время события п...естное время. Учёт летнего/зимнего времени автоматический.</div>
-      </div>
-      <button class="btn support-btn" id="btnSupport"></button>
-    </header>
+<header>
+  <div id="header-title">Загрузка файлов для Александры</div>
+  <div class="lang-switch">
+    <span id="lang-label">Язык:</span>
+    <button id="btn-ru" class="active">Русский</button>
+    <button id="btn-en">English</button>
+  </div>
+</header>
 
-    <section class="section">
-      <div class="title" id="title_conv">Конвертация</div>
-      <div class="grid2">
-        <div class="card">
-          <label id="label_input">Время события (UTC)</label>
-          <div class="tabs">
-            <div id="tabPicker" class="tab active">Прокрутка</div>
-            <div id="tabText" class="tab">Ввод</div>
-          </div>
+<main>
+  <!-- ЗАГРУЗКА ФАЙЛОВ -->
+  <section class="card">
+    <h2 id="upload-title">Загрузка файлов</h2>
+    <div class="field-row">
+      <input type="file" id="file-input" multiple />
+      <button class="primary" id="btn-upload">Загрузить</button>
+      <button class="primary" id="btn-retry" style="display:none;"></button>
+    </div>
+    <div class="chip" id="file-count-chip" style="display:none;">
+      <span id="file-count-text"></span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-bar-inner" id="progress-inner"></div>
+    </div>
+    <div class="status" id="status-text"></div>
+    <div class="small-text" id="hint-text">
+      Пожалуйста, не закрывайте вкладку, пока загрузка не завершится.
+    </div>
+    <div class="errors" id="errors-block" style="display:none;">
+      <div id="errors-title"></div>
+      <ul id="errors-list"></ul>
+    </div>
+  </section>
 
-          <div id="pickerBox">
-            <div id="datePicker" class="picker"></div>
-            <div class="timewrap">
-              <div class="field"><select id="hh"></select></div>
-              <span>:</span>
-              <div class="field"><select id="mm"></select></div>
-            </div>
-            <p class="muted" id="hint_picker">Дата/время трактуются как UTC.</p>
-          </div>
+  <!-- ИГРЫ -->
+  <section class="card">
+    <h2 id="games-title">Мини-игры, чтобы скоротать ожидание</h2>
+    <div class="small-text" id="games-desc">
+      Файлы загружаются в фоне. Можете спокойно поиграть, пока ждёте.
+    </div>
+    <div class="game-tabs">
+      <button data-game="puzzle" id="tab-puzzle" class="active">🧩 Пазл</button>
+      <button data-game="tetris" id="tab-tetris">🟦 Тетрис</button>
+      <button data-game="game2048" id="tab-2048">2048</button>
+      <button data-game="flappy" id="tab-flappy">🐤 Flappy</button>
+      <button data-game="snake" id="tab-snake">🐍 Snake</button>
+      <button data-game="memory" id="tab-memory">🃏 Memory</button>
+      <button data-game="bubble" id="tab-bubble">🫧 Bubble</button>
+      <button data-game="number" id="tab-number">🔢 Number</button>
+      <button data-game="bounce" id="tab-bounce">🧱 Bounce</button>
+      <button data-game="orbit" id="tab-orbit">🪐 Orbit</button>
+    </div>
+    <div id="game-container"></div>
+  </section>
+</main>
 
-          <div id="textBox" class="hidden">
-            <input id="utcInput" type="text" inputmode="numeric" placeholder="01.12.2025 18:30" />
-            <p id="hint_input" class="muted">Формат: <span id="fmtBadge" class="badge mono">ДД.ММ.ГГГГ HH:mm</span> (авто по региону). Также принимается ISO <span class="mono">2025-11-05T14:00</span>.</p>
-            <p id="input_err" class="muted warn" style="display:none;"></p>
-          </div>
-        </div>
+<script>
+  // ========= НАСТРОЙКИ =========
+  const FUNCTION_URL = "https://functions.yandexcloud.net/d4eafltkn2hkceg16of4"; // <-- подставь свой URL, если он другой
+  const SECRET = "f7bzlvqi"; // <-- подставь тот же секрет, что в UPLOAD_SECRET
 
-        <div class="card">
-          <label id="label_result">Результат <span id="tzChip" class="chip"></span></label>
-          <div id="outLocal" class="big" aria-live="polite">—</div>
-          <div id="outTz" class="muted mono"></div>
-          <div class="muted" style="margin-top:6px;"><span id="label_now">Текущее время:</span> <span id="outNow"></span></div>
-          <div id="countdown" class="count"></div>
-          <div class="actions">
-            <button class="btn" id="btnRefresh"></button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="title" id="title_setup">Настройки</div>
-      <div class="grid3">
-        <div class="card">
-          <label id="label_tz">Ваш часовой пояс <span id="tzCurrent" class="chip"></span></label>
-          <div class="row" style="margin-bottom:8px;">
-            <input id="tzSearch" type="text" placeholder="Поиск (Europe/Moscow, America/New_York…)" />
-            <button class="btn" id="btnAuto">Авто</button>
-          </div>
-          <div class="zones" id="zoneList"></div>
-        </div>
-
-        <div class="card">
-          <label id="label_lang">Язык интерфейса</label>
-          <select id="lang">
-            <option value="ru">🇷🇺 Русский</option>
-            <option value="en">🇬🇧 English</option>
-            <option value="es">🇪🇸 Español</option>
-            <option value="it">🇮🇹 Italiano</option>
-            <option value="nl">🇳🇱 Nederlands</option>
-	    <option value="de">🇩🇪 Deutsch</option>
-  	    <option value="fr">🇫🇷 Français</option>
- 	    <option value="pt">🇧🇷 Português</option>
-  	    <option value="ko">🇰🇷 한국어</option>
-  	    <option value="ar">🇸🇦 العربية</option>
-          </select>
-          <p class="muted" id="hint_lang">Текстовые подписи и формат вывода меняются по языку.</p>
-        </div>
-
-        <div class="card">
-          <label id="label_df">Формат даты (ввод/прокрутка)</label>
-          <select id="dateFormat">
-            <option value="auto" id="df_auto">Авто (по языку интерфейса)</option>
-            <option value="MDY">MM/DD/YYYY</option>
-            <option value="DMY">DD/MM/YYYY</option>
-            <option value="D.M.Y">DD.MM.YYYY</option>
-            <option value="YMD">YYYY-MM-DD</option>
-          </select>
-          <p class="muted" id="hint_df">Выбор влияет и на поле «Ввод», и на «Прокрутку».</p>
-        </div>
-      </div>
-    </section>
-    
-  </main>
-
-  <script>
-
-  // Helper to get element by id
-  function $(id){ return document.getElementById(id); }
-
-  // Supported languages
-  var SUPPORTED_LANGS = ['ru','en','es','it','nl','de','fr','pt','ko','ar'];
-
-  // Dictionary with UI texts
-  var DICT = {
+  // ========= ПЕРЕВОДЫ =========
+  const translations = {
     ru: {
-      title: "Калькулятор времени: UTC → ваш часовой пояс",
-      note: "Введите дату и время события по UTC — получите местное время. Учёт летнего/зимнего времени автоматический.",
-      conv: "Конвертация",
-      setup: "Настройки",
-      input_label: "Время события (UTC)",
-      picker_hint: "Дата/время трактуются как UTC.",
-      text_hint: "Формат: {fmt}. Также принимается ISO 2025-11-05T14:00.",
-      text_err: "Введите корректную дату/время в формате {fmt} (UTC).",
-      tz_label: "Ваш часовой пояс",
-      search_placeholder: "Поиск (Europe/Moscow, America/New_York…)",
-      auto_btn: "Авто",
-      result: "Результат",
-      current_time: "Текущее время:",
-      share: "Поделиться",
-      lang_label: "Язык интерфейса",
-      lang_hint: "Текстовые подписи и формат вывода меняются по языку.",
-      df_label: "Формат даты (ввод/прокрутка)",
-      df_hint: "Выбор влияет и на поле «Ввод», и на «Прокрутку».",
-      tab_picker: "Прокрутка",
-      tab_text: "Ввод",
-      df_auto: "Авто (по языку интерфейса)",
-      refresh_btn: "Обновить",
-      support_btn: "Поддержать автора",
-      left: "Осталось",
-      passed: "Прошло",
-      now: "Событие прямо сейчас",
-      input_placeholder: "01.12.2025 18:30",
-      unit_d: "д",
-      unit_h: "ч",
-      unit_m: "м",
-      unit_s: "с"
+      headerTitle: "Загрузка файлов для Александры",
+      langLabel: "Язык:",
+      uploadTitle: "Загрузка файлов",
+      chooseFiles: "Выберите файлы",
+      uploadBtn: "Загрузить",
+      retryBtn: "Повторить только проблемные",
+      statusIdle: "Файлы не выбраны.",
+      statusReady: (n) => `Файлов для загрузки: ${n}.`,
+      statusStarting: "Начинаю загрузку…",
+      statusFile: (cur, total, name) =>
+        `Сейчас загружается: ${cur}/${total} — ${name}`,
+      statusDoneAll: (ok, total, sizeText) =>
+        `Готово! Загружено ${ok} из ${total} файлов (${sizeText}).`,
+      statusDonePartial: (ok, total, sizeText, failed) =>
+        `Загружено успешно: ${ok} из ${total} файлов (${sizeText}). Не удалось: ${failed}.`,
+      statusRetry: (count) => `Повторная загрузка ${count} проблемных файлов…`,
+      sizeHint: "Рекомендуемый максимальный суммарный размер — до 35–40 ГБ.",
+      dontClose: "Пожалуйста, не закрывайте вкладку, пока загрузка не завершится.",
+      errorsTitle: (n) =>
+        n === 1 ? "Не удалось загрузить 1 файл:" : `Не удалось загрузить ${n} файлов:`,
+      gamesTitle: "Мини-игры, чтобы скоротать ожидание",
+      gamesDesc: "Файлы загружаются в фоне. Можете спокойно поиграть, пока ждёте.",
+      gamePuzzle: "🧩 Пазл",
+      gameTetris: "🟦 Тетрис",
+      game2048: "2048",
+      gameFlappy: "🐤 Flappy",
+      gameSnake: "🐍 Змейка",
+      gameMemory: "🃏 Memory",
+      gameBubble: "🫧 Пузырьки",
+      gameNumber: "🔢 Числа",
+      gameBounce: "🧱 Bounce",
+      gameOrbit: "🪐 Orbit",
+      puzzleTitle: "Пятнашки 4×4",
+      puzzleHint: "Кликайте по плиткам рядом с пустой, чтобы собрать числа по порядку.",
+      tetrisTitle: "Мини-тетрис",
+      tetrisHint: "Управление: ← → ↓, пробел — повернуть фигуру.",
+      game2048Title: "2048",
+      game2048Hint: "Соединяйте одинаковые плитки стрелками, чтобы получить 2048.",
+      flappyTitle: "Мини Flappy",
+      flappyHint: "Нажимайте пробел или кликайте по полю, чтобы птичка не врезалась в трубы.",
+      snakeTitle: "Змейка",
+      snakeHint: "Управление: стрелки. Ешьте еду, не врезайтесь в стены и хвост.",
+      memoryTitle: "Поиск пар",
+      memoryHint: "Открывайте карточки и находите пары.",
+      bubbleTitle: "Лопай пузырьки",
+      bubbleHint: "Кликайте по пузырькам, пока они не исчезли.",
+      numberTitle: "Числа по порядку",
+      numberHint: "Кликайте по числам от 1 до 25 как можно быстрее.",
+      bounceTitle: "Мини арканоид",
+      bounceHint: "Двигайте платформу (← →), чтобы отбивать мяч и ломать блоки.",
+      orbitTitle: "Кликаем по орбитам",
+      orbitHint: "Кликайте по летающим точкам, пока они не улетели.",
+      filesChip: (n) => `Выбрано файлов: ${n}`
     },
     en: {
-      title: "Time Converter: UTC → your time zone",
-      note: "Enter a UTC date and time to see your local time. Daylight saving is handled automatically.",
-      conv: "Conversion",
-      setup: "Settings",
-      input_label: "Event time (UTC)",
-      picker_hint: "Date/time is interpreted as UTC.",
-      text_hint: "Format: {fmt}. ISO 2025-11-05T14:00 is also accepted.",
-      text_err: "Please enter a valid UTC date/time in format {fmt}.",
-      tz_label: "Your time zone",
-      search_placeholder: "Search (Europe/Moscow, America/New_York…)",
-      auto_btn: "Auto",
-      result: "Result",
-      current_time: "Current time:",
-      share: "Share",
-      lang_label: "Interface language",
-      lang_hint: "Labels and output follow the selected language.",
-      df_label: "Date format (input/picker)",
-      df_hint: "Affects both Text and Wheel modes.",
-      tab_picker: "Wheel",
-      tab_text: "Text",
-      df_auto: "Auto (by interface language)",
-      refresh_btn: "Refresh",
-      support_btn: "Support the author",
-      left: "Left",
-      passed: "Passed",
-      now: "Happening now",
-      input_placeholder: "11/05/2025 18:30",
-      unit_d: "d",
-      unit_h: "h",
-      unit_m: "m",
-      unit_s: "s"
-    },
-    es: {
-      title: "Conversor de hora: UTC → tu zona horaria",
-      note: "Introduce una fecha y hora en UTC para ver tu hora local. El horario de verano se aplica automáticamente.",
-      conv: "Conversión",
-      setup: "Ajustes",
-      input_label: "Hora del evento (UTC)",
-      picker_hint: "La fecha y hora se interpretan como UTC.",
-      text_hint: "Formato: {fmt}. También se acepta ISO 2025-11-05T14:00.",
-      text_err: "Introduce una fecha y hora UTC válidas en formato {fmt}.",
-      tz_label: "Tu zona horaria",
-      search_placeholder: "Búsqueda (Europe/Moscow, America/New_York…)",
-      auto_btn: "Auto",
-      result: "Resultado",
-      current_time: "Hora actual:",
-      share: "Compartir",
-      lang_label: "Idioma de la interfaz",
-      lang_hint: "Las etiquetas y el formato siguen el idioma seleccionado.",
-      df_label: "Formato de fecha (texto/rueda)",
-      df_hint: "Afecta tanto al modo Texto como al modo Rueda.",
-      tab_picker: "Rueda",
-      tab_text: "Texto",
-      df_auto: "Auto (según el idioma)",
-      refresh_btn: "Actualizar",
-      support_btn: "Apoyar al autor",
-      left: "Queda",
-      passed: "Pasado",
-      now: "Ahora mismo",
-      input_placeholder: "05/11/2025 18:30",
-      unit_d: "d",
-      unit_h: "h",
-      unit_m: "m",
-      unit_s: "s"
-    },
-    it: {
-      title: "Convertitore orario: UTC → il tuo fuso orario",
-      note: "Inserisci una data e ora in UTC per vedere l'ora locale. L'ora legale è gestita automaticamente.",
-      conv: "Conversione",
-      setup: "Impostazioni",
-      input_label: "Ora dell'evento (UTC)",
-      picker_hint: "La data e l'ora sono interpretate come UTC.",
-      text_hint: "Formato: {fmt}. È accettato anche ISO 2025-11-05T14:00.",
-      text_err: "Inserisci una data/ora UTC valida nel formato {fmt}.",
-      tz_label: "Il tuo fuso orario",
-      search_placeholder: "Ricerca (Europe/Moscow, America/New_York…)",
-      auto_btn: "Auto",
-      result: "Risultato",
-      current_time: "Ora attuale:",
-      share: "Condividi",
-      lang_label: "Lingua dell'interfaccia",
-      lang_hint: "Le etichette e il formato seguono la lingua selezionata.",
-      df_label: "Formato data (testo/ruota)",
-      df_hint: "Influisce sia sulla modalità Testo che sulla modalità Ruota.",
-      tab_picker: "Ruota",
-      tab_text: "Testo",
-      df_auto: "Auto (in base alla lingua)",
-      refresh_btn: "Aggiorna",
-      support_btn: "Sostieni l'autore",
-      left: "Rimanente",
-      passed: "Trascorso",
-      now: "Proprio ora",
-      input_placeholder: "05/11/2025 18:30",
-      unit_d: "g",
-      unit_h: "h",
-      unit_m: "m",
-      unit_s: "s"
-    },
-    nl: {
-      title: "Tijdconverter: UTC → jouw tijdzone",
-      note: "Voer een datum en tijd in UTC in om je lokale tijd te zien. Zomertijd wordt automatisch verwerkt.",
-      conv: "Conversie",
-      setup: "Instellingen",
-      input_label: "Tijdstip van gebeurtenis (UTC)",
-      picker_hint: "Datum/tijd wordt geïnterpreteerd als UTC.",
-      text_hint: "Formaat: {fmt}. ISO 2025-11-05T14:00 wordt ook geaccepteerd.",
-      text_err: "Voer een geldige UTC-datum en -tijd in in het formaat {fmt}.",
-      tz_label: "Jouw tijdzone",
-      search_placeholder: "Zoeken (Europe/Moscow, America/New_York…)",
-      auto_btn: "Auto",
-      result: "Resultaat",
-      current_time: "Huidige tijd:",
-      share: "Delen",
-      lang_label: "Interfacetaal",
-      lang_hint: "Labels en uitvoer volgen de gekozen taal.",
-      df_label: "Datumnotatie (tekst/wiel)",
-      df_hint: "Beïnvloedt zowel Tekst- als Wiel-modus.",
-      tab_picker: "Wiel",
-      tab_text: "Tekst",
-      df_auto: "Auto (volgens taal)",
-      refresh_btn: "Vernieuwen",
-      support_btn: "Auteur steunen",
-      left: "Resterend",
-      passed: "Verlopen",
-      now: "Nu bezig",
-      input_placeholder: "05-11-2025 18:30",
-      unit_d: "d",
-      unit_h: "u",
-      unit_m: "m",
-      unit_s: "s"
-    },
-    de: {
-      title: "Zeitrechner: UTC → deine Zeitzone",
-      note: "Gib einen UTC-Zeitpunkt ein, um deine Ortszeit zu sehen. Die Sommerzeit wird automatisch berücksichtigt.",
-      conv: "Umrechnung",
-      setup: "Einstellungen",
-      input_label: "Ereigniszeit (UTC)",
-      picker_hint: "Datum/Zeit wird als UTC interpretiert.",
-      text_hint: "Format: {fmt}. ISO 2025-11-05T14:00 wird ebenfalls akzeptiert.",
-      text_err: "Bitte gib ein gültiges UTC-Datum/-Uhrzeit im Format {fmt} ein.",
-      tz_label: "Deine Zeitzone",
-      search_placeholder: "Suche (Europe/Moscow, America/New_York…)",
-      auto_btn: "Auto",
-      result: "Ergebnis",
-      current_time: "Aktuelle Zeit:",
-      share: "Teilen",
-      lang_label: "Oberflächensprache",
-      lang_hint: "Beschriftungen und Format richten sich nach der Sprache.",
-      df_label: "Datumsformat (Eingabe/Rad)",
-      df_hint: "Wirkt sich auf Text- und Radmodus aus.",
-      tab_picker: "Rad",
-      tab_text: "Text",
-      df_auto: "Auto (nach Sprache)",
-      refresh_btn: "Aktualisieren",
-      support_btn: "Autor unterstützen",
-      left: "Verbleibend",
-      passed: "Vergangen",
-      now: "Gerade jetzt",
-      input_placeholder: "05.11.2025 18:30",
-      unit_d: "T",
-      unit_h: "Std",
-      unit_m: "Min",
-      unit_s: "Sek"
-    },
-    fr: {
-      title: "Convertisseur de temps : UTC → votre fuseau horaire",
-      note: "Saisissez une date et une heure en UTC pour voir votre heure locale. L'heure d'été est gérée automatiquement.",
-      conv: "Conversion",
-      setup: "Paramètres",
-      input_label: "Heure de l’événement (UTC)",
-      picker_hint: "La date/heure est interprétée comme UTC.",
-      text_hint: "Format : {fmt}. Le format ISO 2025-11-05T14:00 est également accepté.",
-      text_err: "Veuillez saisir une date/heure UTC valide au format {fmt}.",
-      tz_label: "Votre fuseau horaire",
-      search_placeholder: "Recherche (Europe/Moscow, America/New_York…)",
-      auto_btn: "Auto",
-      result: "Résultat",
-      current_time: "Heure actuelle :",
-      share: "Partager",
-      lang_label: "Langue de l’interface",
-      lang_hint: "Les libellés et le format s’adaptent à la langue.",
-      df_label: "Format de date (saisie/roue)",
-      df_hint: "Affecte les modes Saisie et Roue.",
-      tab_picker: "Roue",
-      tab_text: "Texte",
-      df_auto: "Auto (selon la langue)",
-      refresh_btn: "Actualiser",
-      support_btn: "Soutenir l’auteur",
-      left: "Restant",
-      passed: "Écoulé",
-      now: "En ce moment",
-      input_placeholder: "05/11/2025 18:30",
-      unit_d: "j",
-      unit_h: "h",
-      unit_m: "min",
-      unit_s: "s"
-    },
-    pt: {
-      title: "Conversor de horário: UTC → seu fuso horário",
-      note: "Insira uma data e hora em UTC para ver seu horário local. O horário de verão é tratado automaticamente.",
-      conv: "Conversão",
-      setup: "Configurações",
-      input_label: "Horário do evento (UTC)",
-      picker_hint: "A data/hora é interpretada como UTC.",
-      text_hint: "Formato: {fmt}. Também é aceito ISO 2025-11-05T14:00.",
-      text_err: "Insira uma data/hora UTC válida no formato {fmt}.",
-      tz_label: "Seu fuso horário",
-      search_placeholder: "Pesquisa (Europe/Moscow, America/New_York…)",
-      auto_btn: "Auto",
-      result: "Resultado",
-      current_time: "Horário atual:",
-      share: "Compartilhar",
-      lang_label: "Idioma da interface",
-      lang_hint: "Os rótulos e o formato seguem o idioma escolhido.",
-      df_label: "Formato de data (texto/roda)",
-      df_hint: "Afeta os modos Texto e Roda.",
-      tab_picker: "Roda",
-      tab_text: "Texto",
-      df_auto: "Auto (conforme idioma)",
-      refresh_btn: "Atualizar",
-      support_btn: "Apoiar o autor",
-      left: "Restante",
-      passed: "Decorrido",
-      now: "Acontecendo agora",
-      input_placeholder: "05/11/2025 18:30",
-      unit_d: "d",
-      unit_h: "h",
-      unit_m: "min",
-      unit_s: "s"
-    },
-    ko: {
-      title: "시간 변환기: UTC → 내 시간대",
-      note: "UTC 기준 날짜와 시간을 입력하면 내 지역 시간을 확인할 수 있습니다. 서머타임은 자동으로 적용됩니다.",
-      conv: "변환",
-      setup: "설정",
-      input_label: "이벤트 시간 (UTC)",
-      picker_hint: "날짜/시간은 UTC 기준으로 해석됩니다.",
-      text_hint: "형식: {fmt}. ISO 2025-11-05T14:00 도 허용됩니다.",
-      text_err: "UTC 날짜와 시간을 {fmt} 형식으로 올바르게 입력해 주세요.",
-      tz_label: "내 시간대",
-      search_placeholder: "검색 (Europe/Moscow, America/New_York…)",
-      auto_btn: "자동",
-      result: "결과",
-      current_time: "현재 시간:",
-      share: "공유",
-      lang_label: "인터페이스 언어",
-      lang_hint: "레이블과 출력 형식은 선택한 언어를 따릅니다.",
-      df_label: "날짜 형식 (텍스트/휠)",
-      df_hint: "텍스트/휠 모드 모두에 적용됩니다.",
-      tab_picker: "휠",
-      tab_text: "텍스트",
-      df_auto: "자동 (언어 기준)",
-      refresh_btn: "새로고침",
-      support_btn: "작성자 후원",
-      left: "남음",
-      passed: "지남",
-      now: "지금 진행 중",
-      input_placeholder: "2025-11-05 18:30",
-      unit_d: "일",
-      unit_h: "시간",
-      unit_m: "분",
-      unit_s: "초"
-    },
-    ar: {
-      title: "محول الوقت: من UTC إلى منطقتك الزمنية",
-      note: "أدخل التاريخ والوقت بتوقيت UTC لمعرفة الوقت المحلي. يتم تطبيق التوقيت الصيفي تلقائيًا.",
-      conv: "التحويل",
-      setup: "الإعدادات",
-      input_label: "وقت الحدث (UTC)",
-      picker_hint: "يتم تفسير التاريخ/الوقت على أنه بتوقيت UTC.",
-      text_hint: "التنسيق: {fmt}. يتم قبول ISO 2025-11-05T14:00 أيضًا.",
-      text_err: "يرجى إدخال تاريخ/وقت UTC صالح بالتنسيق {fmt}.",
-      tz_label: "منطقتك الزمنية",
-      search_placeholder: "بحث (Europe/Moscow, America/New_York…)",
-      auto_btn: "تلقائي",
-      result: "النتيجة",
-      current_time: "الوقت الحالي:",
-      share: "مشاركة",
-      lang_label: "لغة الواجهة",
-      lang_hint: "تتبع التسميات والتنسيق اللغة المحددة.",
-      df_label: "تنسيق التاريخ (نص/عجلة)",
-      df_hint: "يؤثر على وضعي النص والعجلة.",
-      tab_picker: "عجلة",
-      tab_text: "نص",
-      df_auto: "تلقائي (حسب اللغة)",
-      refresh_btn: "تحديث",
-      support_btn: "دعم المؤلف",
-      left: "المتبقي",
-      passed: "المنقضي",
-      now: "يحدث الآن",
-      input_placeholder: "2025-11-05 18:30",
-      unit_d: "يوم",
-      unit_h: "ساعة",
-      unit_m: "دقيقة",
-      unit_s: "ثانية"
+      headerTitle: "File upload for Alexandra",
+      langLabel: "Language:",
+      uploadTitle: "File upload",
+      chooseFiles: "Choose files",
+      uploadBtn: "Upload",
+      retryBtn: "Retry failed only",
+      statusIdle: "No files selected.",
+      statusReady: (n) => `Files to upload: ${n}.`,
+      statusStarting: "Starting upload…",
+      statusFile: (cur, total, name) =>
+        `Uploading: ${cur}/${total} — ${name}`,
+      statusDoneAll: (ok, total, sizeText) =>
+        `Done! Uploaded ${ok} of ${total} files (${sizeText}).`,
+      statusDonePartial: (ok, total, sizeText, failed) =>
+        `Uploaded successfully: ${ok} of ${total} files (${sizeText}). Failed: ${failed}.`,
+      statusRetry: (count) => `Retrying upload of ${count} failed files…`,
+      sizeHint: "Recommended total size: up to about 35–40 GB.",
+      dontClose: "Please do not close this tab until the upload is finished.",
+      errorsTitle: (n) =>
+        n === 1 ? "Failed to upload 1 file:" : `Failed to upload ${n} files:`,
+      gamesTitle: "Mini games to pass the time",
+      gamesDesc: "Files are uploading in the background. Feel free to play while you wait.",
+      gamePuzzle: "🧩 Puzzle",
+      gameTetris: "🟦 Tetris",
+      game2048: "2048",
+      gameFlappy: "🐤 Flappy",
+      gameSnake: "🐍 Snake",
+      gameMemory: "🃏 Memory",
+      gameBubble: "🫧 Bubble",
+      gameNumber: "🔢 Numbers",
+      gameBounce: "🧱 Bounce",
+      gameOrbit: "🪐 Orbit",
+      puzzleTitle: "15 Puzzle 4×4",
+      puzzleHint: "Click tiles next to the empty one to arrange numbers in order.",
+      tetrisTitle: "Mini Tetris",
+      tetrisHint: "Controls: ← → ↓, space — rotate.",
+      game2048Title: "2048",
+      game2048Hint: "Merge tiles with the same number using arrow keys to reach 2048.",
+      flappyTitle: "Mini Flappy",
+      flappyHint: "Press space or click to keep the bird between the pipes.",
+      snakeTitle: "Snake",
+      snakeHint: "Controls: arrows. Eat food, avoid walls and your tail.",
+      memoryTitle: "Memory",
+      memoryHint: "Flip cards to find matching pairs.",
+      bubbleTitle: "Bubble Pop",
+      bubbleHint: "Click bubbles before they disappear.",
+      numberTitle: "Number Rush",
+      numberHint: "Click numbers from 1 to 25 as fast as you can.",
+      bounceTitle: "Mini Arkanoid",
+      bounceHint: "Move the paddle (← →) to bounce the ball and break bricks.",
+      orbitTitle: "Orbit Clicker",
+      orbitHint: "Click flying dots on orbits before they pass by.",
+      filesChip: (n) => `Files selected: ${n}`
     }
   };
 
-  // Fallback for other languages: use English texts
-  function getTexts(lang){
-    if (DICT[lang]) return DICT[lang];
-    return DICT['en'];
+  let currentLang = "ru";
+
+  // Элементы
+  const headerTitleEl = document.getElementById("header-title");
+  const langLabelEl = document.getElementById("lang-label");
+  const btnRu = document.getElementById("btn-ru");
+  const btnEn = document.getElementById("btn-en");
+
+  const uploadTitleEl = document.getElementById("upload-title");
+  const btnUpload = document.getElementById("btn-upload");
+  const btnRetry = document.getElementById("btn-retry");
+  const statusTextEl = document.getElementById("status-text");
+  const hintTextEl = document.getElementById("hint-text");
+  const progressInner = document.getElementById("progress-inner");
+  const fileInput = document.getElementById("file-input");
+  const errorsBlock = document.getElementById("errors-block");
+  const errorsTitleEl = document.getElementById("errors-title");
+  const errorsListEl = document.getElementById("errors-list");
+  const fileCountChip = document.getElementById("file-count-chip");
+  const fileCountText = document.getElementById("file-count-text");
+
+  const gamesTitleEl = document.getElementById("games-title");
+  const gamesDescEl = document.getElementById("games-desc");
+  const tabPuzzle = document.getElementById("tab-puzzle");
+  const tabTetris = document.getElementById("tab-tetris");
+  const tab2048 = document.getElementById("tab-2048");
+  const tabFlappy = document.getElementById("tab-flappy");
+  const tabSnake = document.getElementById("tab-snake");
+  const tabMemory = document.getElementById("tab-memory");
+  const tabBubble = document.getElementById("tab-bubble");
+  const tabNumber = document.getElementById("tab-number");
+  const tabBounce = document.getElementById("tab-bounce");
+  const tabOrbit = document.getElementById("tab-orbit");
+  const gameContainer = document.getElementById("game-container");
+
+  // Состояние загрузки
+  let allFiles = [];
+  let failedFiles = [];
+  let isUploading = false;
+
+  function formatSize(bytes) {
+    const units = ["Б", "КБ", "МБ", "ГБ", "ТБ"];
+    const unitsEn = ["B", "KB", "MB", "GB", "TB"];
+    const u = currentLang === "ru" ? units : unitsEn;
+    if (bytes === 0) return "0 " + u[0];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    const value = (bytes / Math.pow(1024, i)).toFixed(1);
+    return `${value} ${u[i]}`;
   }
 
-  // State
-  var state = {
-    lang: getInitialLang(),
-    tz: getUserTZ(),
-    mode: "picker",
-    dateFormat: "auto", // 'auto','MDY','DMY','D.M.Y','YMD'
-    utcDate: null
-  };
+  function updateLanguage(lang) {
+    currentLang = lang;
+    const t = translations[lang];
 
-  // Initial language detection
-  function getInitialLang(){
-    try{
-      var url = String(window.location.href);
-      var qIndex = url.indexOf("?");
-      if (qIndex !== -1){
-        var qs = url.substring(qIndex+1).split("&");
-        for (var i=0;i<qs.length;i++){
-          var kv = qs[i].split("=");
-          if (kv[0] === "lang"){
-            var v = decodeURIComponent(kv[1] || "").toLowerCase();
-            if (SUPPORTED_LANGS.indexOf(v) !== -1) return v;
+    headerTitleEl.textContent = t.headerTitle;
+    langLabelEl.textContent = t.langLabel;
+    uploadTitleEl.textContent = t.uploadTitle;
+    btnUpload.textContent = t.uploadBtn;
+    btnRetry.textContent = t.retryBtn;
+    hintTextEl.textContent = t.dontClose + " " + t.sizeHint;
+
+    gamesTitleEl.textContent = t.gamesTitle;
+    gamesDescEl.textContent = t.gamesDesc;
+
+    tabPuzzle.textContent = t.gamePuzzle;
+    tabTetris.textContent = t.gameTetris;
+    tab2048.textContent = t.game2048;
+    tabFlappy.textContent = t.gameFlappy;
+    tabSnake.textContent = t.gameSnake;
+    tabMemory.textContent = t.gameMemory;
+    tabBubble.textContent = t.gameBubble;
+    tabNumber.textContent = t.gameNumber;
+    tabBounce.textContent = t.gameBounce;
+    tabOrbit.textContent = t.gameOrbit;
+
+    if (allFiles.length === 0) {
+      statusTextEl.textContent = t.statusIdle;
+      fileCountChip.style.display = "none";
+    } else {
+      statusTextEl.textContent = t.statusReady(allFiles.length);
+      fileCountChip.style.display = "inline-flex";
+      fileCountText.textContent = t.filesChip(allFiles.length);
+    }
+
+    if (failedFiles.length > 0) {
+      errorsTitleEl.textContent = t.errorsTitle(failedFiles.length);
+    }
+
+    btnRu.classList.toggle("active", lang === "ru");
+    btnEn.classList.toggle("active", lang === "en");
+
+    const activeGame = document.querySelector(".game-tabs button.active")?.dataset.game || "puzzle";
+    safeLoadGame(activeGame);
+  }
+
+  (function initLang() {
+    const saved = localStorage.getItem("upload_lang");
+    if (saved === "ru" || saved === "en") {
+      currentLang = saved;
+    } else {
+      const navLang = (navigator.language || "en").toLowerCase();
+      currentLang = navLang.startsWith("ru") ? "ru" : "en";
+    }
+    updateLanguage(currentLang);
+  })();
+
+  btnRu.addEventListener("click", () => {
+    localStorage.setItem("upload_lang", "ru");
+    updateLanguage("ru");
+  });
+  btnEn.addEventListener("click", () => {
+    localStorage.setItem("upload_lang", "en");
+    updateLanguage("en");
+  });
+
+  fileInput.addEventListener("change", () => {
+    allFiles = Array.from(fileInput.files || []);
+    const t = translations[currentLang];
+    if (allFiles.length === 0) {
+      statusTextEl.textContent = t.statusIdle;
+      fileCountChip.style.display = "none";
+    } else {
+      statusTextEl.textContent = t.statusReady(allFiles.length);
+      fileCountChip.style.display = "inline-flex";
+      fileCountText.textContent = t.filesChip(allFiles.length);
+    }
+    progressInner.style.width = "0%";
+    errorsBlock.style.display = "none";
+    errorsListEl.innerHTML = "";
+    failedFiles = [];
+  });
+
+  async function uploadFiles(filesToUpload, isRetry = false) {
+    if (!filesToUpload.length) return;
+    const t = translations[currentLang];
+
+    isUploading = true;
+    btnUpload.disabled = true;
+    btnRetry.style.display = "none";
+    errorsBlock.style.display = "none";
+    errorsListEl.innerHTML = "";
+    failedFiles = [];
+
+    const totalFiles = filesToUpload.length;
+    let uploadedCount = 0;
+    let uploadedBytes = 0;
+    const totalSize = filesToUpload.reduce((s, f) => s + f.size, 0);
+
+    statusTextEl.textContent = isRetry
+      ? t.statusRetry(totalFiles)
+      : t.statusStarting;
+    progressInner.style.width = "0%";
+
+    for (let i = 0; i < filesToUpload.length; i++) {
+      const file = filesToUpload[i];
+      const currentIndex = i + 1;
+      statusTextEl.textContent = t.statusFile(currentIndex, totalFiles, file.name);
+
+      try {
+        const metaResp = await fetch(FUNCTION_URL + "?key=" + encodeURIComponent(SECRET), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            filename: file.name,
+            size: file.size,
+            contentType: file.type || "application/octet-stream",
+          }),
+        });
+        if (!metaResp.ok) {
+          throw new Error("Meta request failed: " + metaResp.status);
+        }
+        const metaData = await metaResp.json();
+        const uploadUrl = metaData.upload_url;
+        if (!uploadUrl) {
+          throw new Error("No upload_url");
+        }
+
+        await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", uploadUrl, true);
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable && totalSize > 0) {
+              const currentUploaded = uploadedBytes + e.loaded;
+              const percent = (currentUploaded / totalSize) * 100;
+              progressInner.style.width = Math.min(100, percent).toFixed(1) + "%";
+            }
+          };
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              uploadedBytes += file.size;
+              const percent = (uploadedBytes / totalSize) * 100;
+              progressInner.style.width = Math.min(100, percent).toFixed(1) + "%";
+              resolve();
+            } else {
+              reject(new Error("Upload failed: " + xhr.status));
+            }
+          };
+          xhr.onerror = () => reject(new Error("Network error"));
+          xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+          xhr.send(file);
+        });
+
+        uploadedCount += 1;
+      } catch (err) {
+        console.error("Error uploading file", file.name, err);
+        failedFiles.push({ file, reason: err.message || "Error" });
+      }
+    }
+
+    const sizeText = formatSize(uploadedBytes);
+    if (failedFiles.length === 0) {
+      statusTextEl.textContent = t.statusDoneAll(uploadedCount, totalFiles, sizeText);
+    } else {
+      statusTextEl.textContent = t.statusDonePartial(
+        uploadedCount,
+        totalFiles,
+        sizeText,
+        failedFiles.length
+      );
+      errorsTitleEl.textContent = t.errorsTitle(failedFiles.length);
+      errorsListEl.innerHTML = "";
+      failedFiles.forEach((f) => {
+        const li = document.createElement("li");
+        li.textContent = `${f.file.name} — ${f.reason}`;
+        errorsListEl.appendChild(li);
+      });
+      errorsBlock.style.display = "block";
+      btnRetry.style.display = "inline-block";
+    }
+
+    btnUpload.disabled = false;
+    isUploading = false;
+  }
+
+  btnUpload.addEventListener("click", () => {
+    const t = translations[currentLang];
+    if (!allFiles.length) {
+      statusTextEl.textContent = t.statusIdle;
+      return;
+    }
+    const totalSize = allFiles.reduce((s, f) => s + f.size, 0);
+    const maxRecommended = 40 * 1024 * 1024 * 1024;
+    if (totalSize > maxRecommended) {
+      alert(t.sizeHint + "\n" + "( " + formatSize(totalSize) + " )");
+    }
+    uploadFiles(allFiles, false);
+  });
+
+  btnRetry.addEventListener("click", () => {
+    if (!failedFiles.length) return;
+    const retryList = failedFiles.map((x) => x.file);
+    uploadFiles(retryList, true);
+  });
+
+  // ========= ИГРЫ =========
+  function clearGameContainer() {
+    if (typeof gameContainer._cleanup === "function") {
+      try { gameContainer._cleanup(); } catch(e) {}
+      gameContainer._cleanup = null;
+    }
+    gameContainer.innerHTML = "";
+  }
+
+  function setActiveTab(name) {
+    [tabPuzzle, tabTetris, tab2048, tabFlappy, tabSnake, tabMemory, tabBubble, tabNumber, tabBounce, tabOrbit]
+      .forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.game === name);
+      });
+  }
+
+  function loadGame(name) {
+    const t = translations[currentLang];
+    clearGameContainer();
+    setActiveTab(name);
+
+    // ------- ПАЗЛ -------
+    if (name === "puzzle") {
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = t.puzzleTitle;
+      const hint = document.createElement("div");
+      hint.className = "small-text";
+      hint.textContent = t.puzzleHint;
+      const grid = document.createElement("div");
+      grid.style.display = "grid";
+      grid.style.gridTemplateColumns = "repeat(4, 1fr)";
+      grid.style.gap = "4px";
+      grid.style.marginTop = "8px";
+
+      const tiles = [];
+      for (let i = 1; i <= 15; i++) tiles.push(i);
+      tiles.push(null);
+      for (let i = tiles.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+      }
+
+      function renderTiles() {
+        grid.innerHTML = "";
+        tiles.forEach((val, idx) => {
+          const cell = document.createElement("div");
+          cell.style.height = "40px";
+          cell.style.display = "flex";
+          cell.style.alignItems = "center";
+          cell.style.justifyContent = "center";
+          cell.style.borderRadius = "8px";
+          cell.style.cursor = "pointer";
+          cell.style.fontSize = "14px";
+
+          if (val === null) {
+            cell.style.background = "#e5e7eb";
+            cell.textContent = "";
+          } else {
+            cell.style.background = "#3b82f6";
+            cell.style.color = "#fff";
+            cell.textContent = val;
+          }
+
+          cell.addEventListener("click", () => {
+            if (val === null) return;
+            const emptyIndex = tiles.indexOf(null);
+            const row = Math.floor(idx / 4);
+            const col = idx % 4;
+            const er = Math.floor(emptyIndex / 4);
+            const ec = emptyIndex % 4;
+            const isNeighbour =
+              (row === er && Math.abs(col - ec) === 1) ||
+              (col === ec && Math.abs(row - er) === 1);
+            if (isNeighbour) {
+              [tiles[idx], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[idx]];
+              renderTiles();
+            }
+          });
+
+          grid.appendChild(cell);
+        });
+      }
+
+      renderTiles();
+      gameContainer.appendChild(title);
+      gameContainer.appendChild(hint);
+      gameContainer.appendChild(grid);
+      return;
+    }
+
+    // ------- ТЕТРИС -------
+    if (name === "tetris") {
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = t.tetrisTitle;
+      const hint = document.createElement("div");
+      hint.className = "small-text";
+      hint.textContent = t.tetrisHint;
+      const canvas = document.createElement("canvas");
+      canvas.width = 200;
+      canvas.height = 380;
+      const ctx = canvas.getContext("2d");
+
+      const cols = 10;
+      const rows = 19;
+      const size = 20;
+      const board = Array.from({ length: rows }, () => Array(cols).fill(0));
+      const shapes = [
+        [[1, 1, 1, 1]],
+        [[1, 1], [1, 1]],
+        [[0, 1, 0], [1, 1, 1]],
+        [[1, 0, 0], [1, 1, 1]],
+        [[0, 0, 1], [1, 1, 1]],
+        [[1, 1, 0], [0, 1, 1]],
+        [[0, 1, 1], [1, 1, 0]],
+      ];
+
+      function randomShape() {
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        return shape.map((row) => [...row]);
+      }
+
+      let piece = { shape: randomShape(), row: 0, col: 3 };
+
+      function rotate(shape) {
+        const rows = shape.length;
+        const cols = shape[0].length;
+        const res = [];
+        for (let c = 0; c < cols; c++) {
+          const newRow = [];
+          for (let r = rows - 1; r >= 0; r--) {
+            newRow.push(shape[r][c]);
+          }
+          res.push(newRow);
+        }
+        return res;
+      }
+
+      function collides(p) {
+        const { shape, row, col } = p;
+        for (let r = 0; r < shape.length; r++) {
+          for (let c = 0; c < shape[r].length; c++) {
+            if (!shape[r][c]) continue;
+            const nr = row + r;
+            const nc = col + c;
+            if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) return true;
+            if (board[nr][nc]) return true;
+          }
+        }
+        return false;
+      }
+
+      function mergePiece() {
+        const { shape, row, col } = piece;
+        for (let r = 0; r < shape.length; r++) {
+          for (let c = 0; c < shape[r].length; c++) {
+            if (shape[r][c]) {
+              const nr = row + r;
+              const nc = col + c;
+              if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+                board[nr][nc] = 1;
+              }
+            }
+          }
+        }
+        for (let r = rows - 1; r >= 0; r--) {
+          if (board[r].every((v) => v === 1)) {
+            board.splice(r, 1);
+            board.unshift(Array(cols).fill(0));
+            r++;
           }
         }
       }
-    }catch(e){}
-    try{
-      var stored = window.localStorage.getItem("calc_lang");
-      if (stored && SUPPORTED_LANGS.indexOf(stored) !== -1) return stored;
-    }catch(e){}
-    if (navigator && navigator.language){
-      var base = navigator.language.toLowerCase().split("-")[0];
-      if (SUPPORTED_LANGS.indexOf(base) !== -1) return base;
-    }
-    return "ru";
-  }
 
-  // Time zone helpers
-  function getUserTZ(){
-    try{
-      if (typeof Intl === "object" && Intl.DateTimeFormat){
-        var z = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        if (z) return z;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (board[r][c]) {
+              ctx.fillStyle = "#22c55e";
+              ctx.fillRect(c * size, r * size, size - 1, size - 1);
+            }
+          }
+        }
+        ctx.fillStyle = "#3b82f6";
+        const { shape, row, col } = piece;
+        for (let r = 0; r < shape.length; r++) {
+          for (let c = 0; c < shape[r].length; c++) {
+            if (shape[r][c]) {
+              const nr = row + r;
+              const nc = col + c;
+              ctx.fillRect(nc * size, nr * size, size - 1, size - 1);
+            }
+          }
+        }
       }
-    }catch(e){}
-    return "UTC";
-  }
 
-  function getAllZones(){
-    try{
-      if (typeof Intl === "object" && typeof Intl.supportedValuesOf === "function"){
-        return Intl.supportedValuesOf("timeZone");
+      let gameOver = false;
+      function tick() {
+        if (gameOver) return;
+        const newPiece = { shape: piece.shape, row: piece.row + 1, col: piece.col };
+        if (!collides(newPiece)) {
+          piece = newPiece;
+        } else {
+          mergePiece();
+          piece = { shape: randomShape(), row: 0, col: 3 };
+          if (collides(piece)) {
+            gameOver = true;
+          }
+        }
+        draw();
       }
-    }catch(e){}
-    // Fallback set
-    return [
-      "UTC",
-      "Europe/Moscow","Europe/London","Europe/Berlin","Europe/Paris",
-      "America/New_York","America/Chicago","America/Denver","America/Los_Angeles",
-      "Asia/Tokyo","Asia/Shanghai","Asia/Dubai","Australia/Sydney"
-    ];
-  }
+      const interval = setInterval(tick, 500);
 
-  function formatIsoUtcMin(date){
-    function pad2(n){ var s=String(n); return s.length<2 ? "0"+s : s; }
-    var y = date.getUTCFullYear();
-    var m = pad2(date.getUTCMonth()+1);
-    var d = pad2(date.getUTCDate());
-    var hh = pad2(date.getUTCHours());
-    var mm = pad2(date.getUTCMinutes());
-    return y + "-" + m + "-" + d + "T" + hh + ":" + mm;
-  }
+      function handleKey(e) {
+        if (["ArrowLeft", "ArrowRight", "ArrowDown", " "].includes(e.key)) e.preventDefault();
+        if (gameOver) return;
+        if (e.key === "ArrowLeft") {
+          const p = { ...piece, col: piece.col - 1 };
+          if (!collides(p)) piece = p;
+        } else if (e.key === "ArrowRight") {
+          const p = { ...piece, col: piece.col + 1 };
+          if (!collides(p)) piece = p;
+        } else if (e.key === "ArrowDown") {
+          const p = { ...piece, row: piece.row + 1 };
+          if (!collides(p)) piece = p;
+        } else if (e.key === " ") {
+          const p = { ...piece, shape: rotate(piece.shape) };
+          if (!collides(p)) piece = p;
+        }
+        draw();
+      }
 
-  // Parse text input according to selected format
-  function getActiveDf(){
-    var sel = $("dateFormat");
-    var val = sel ? sel.value : "auto";
-    if (!val || val === "auto"){
-      var lang = state.lang;
-      if (lang === "en") return "MDY";
-      if (lang === "ko" || lang === "ar") return "YMD";
-      if (lang === "ru" || lang === "de") return "D.M.Y";
-      // for most others use DMY (DD/MM/YYYY)
-      return "DMY";
-    }
-    return val;
-  }
-
-  // Автоформатирование ввода по текущему формату даты
-  function maskInputByFormat(raw){
-    if (!raw) return "";
-    // оставляем только цифры, максимум 12 (DDMMYYYYHHMM или подобное)
-    var d = String(raw).replace(/\D/g, "");
-    if (d.length > 12) d = d.slice(0, 12);
-    var l = d.length;
-    var df = getActiveDf();
-    var s = "";
-
-    function sub(a, b){
-      return d.slice(a, b);
-    }
-
-    if (df === "MDY"){
-      // MM/DD/YYYY HH:MM
-      if (l <= 2) return d;
-      s = sub(0,2);
-      if (l <= 4){
-        s += "/" + sub(2);
-        return s;
-      }
-      s += "/" + sub(2,4);
-      if (l <= 8){
-        s += "/" + sub(4);
-        return s;
-      }
-      s += "/" + sub(4,8);
-      if (l <= 10){
-        s += " " + sub(8);
-        return s;
-      }
-      s += " " + sub(8,10);
-      if (l <= 12){
-        s += ":" + sub(10);
-        return s;
-      }
-      return s;
-    } else if (df === "YMD"){
-      // YYYY-MM-DD HH:MM
-      if (l <= 4) return d;
-      s = sub(0,4);
-      if (l <= 6){
-        s += "-" + sub(4);
-        return s;
-      }
-      s += "-" + sub(4,6);
-      if (l <= 8){
-        s += "-" + sub(6);
-        return s;
-      }
-      s += "-" + sub(6,8);
-      if (l <= 10){
-        s += " " + sub(8);
-        return s;
-      }
-      s += " " + sub(8,10);
-      if (l <= 12){
-        s += ":" + sub(10);
-        return s;
-      }
-      return s;
-    } else if (df === "D.M.Y"){
-      // DD.MM.YYYY HH:MM
-      if (l <= 2) return d;
-      s = sub(0,2);
-      if (l <= 4){
-        s += "." + sub(2);
-        return s;
-      }
-      s += "." + sub(2,4);
-      if (l <= 8){
-        s += "." + sub(4);
-        return s;
-      }
-      s += "." + sub(4,8);
-      if (l <= 10){
-        s += " " + sub(8);
-        return s;
-      }
-      s += " " + sub(8,10);
-      if (l <= 12){
-        s += ":" + sub(10);
-        return s;
-      }
-      return s;
-    } else {
-      // DMY по умолчанию: DD/MM/YYYY HH:MM
-      if (l <= 2) return d;
-      s = sub(0,2);
-      if (l <= 4){
-        s += "/" + sub(2);
-        return s;
-      }
-      s += "/" + sub(2,4);
-      if (l <= 8){
-        s += "/" + sub(4);
-        return s;
-      }
-      s += "/" + sub(4,8);
-      if (l <= 10){
-        s += " " + sub(8);
-        return s;
-      }
-      s += " " + sub(8,10);
-      if (l <= 12){
-        s += ":" + sub(10);
-        return s;
-      }
-      return s;
-    }
-  }
-
-
-  function parseByFormat(str){
-    if (!str){ return null; }
-    str = String(str).trim();
-    if (!str){ return null; }
-
-    // ISO-стиль с 'T'
-    var mIso = /^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2})$/.exec(str);
-    if (mIso){
-      var yI = parseInt(mIso[1],10);
-      var moI = parseInt(mIso[2],10)-1;
-      var dI = parseInt(mIso[3],10);
-      var hI = parseInt(mIso[4],10);
-      var miI = parseInt(mIso[5],10);
-      return new Date(Date.UTC(yI,moI,dI,hI,miI,0,0));
-    }
-
-    var parts = str.split(/\s+/);
-    if (parts.length < 2) return null;
-    var datePart = parts[0];
-    var timePart = parts[1];
-    var tm = timePart.split(":");
-    if (tm.length < 2) return null;
-    var hh = parseInt(tm[0],10);
-    var mm = parseInt(tm[1],10);
-    if (isNaN(hh) || isNaN(mm)) return null;
-
-    var df = getActiveDf();
-    var DD="",MM="",YYYY="";
-    if (df === "MDY"){
-      var a = datePart.split("/");
-      DD = a[1]; MM = a[0]; YYYY = a[2];
-    } else if (df === "DMY"){
-      var b = datePart.split("/");
-      DD = b[0]; MM = b[1]; YYYY = b[2];
-    } else if (df === "D.M.Y"){
-      var c = datePart.split(".");
-      DD = c[0]; MM = c[1]; YYYY = c[2];
-    } else if (df === "YMD"){
-      var d = datePart.split("-");
-      YYYY = d[0]; MM = d[1]; DD = d[2];
-    } else {
-      // fallback: try DMY with dots or slashes
-      var e = datePart.indexOf(".") !== -1 ? datePart.split(".") : datePart.split("/");
-      DD = e[0]; MM = e[1]; YYYY = e[2];
-    }
-
-    var y = parseInt(YYYY,10);
-    var mo = parseInt(MM,10);
-    var da = parseInt(DD,10);
-    if (isNaN(y) || isNaN(mo) || isNaN(da)) return null;
-    return new Date(Date.UTC(y,(mo||1)-1,da||1,hh||0,mm||0,0,0));
-  }
-
-  function formatInTZ(dateUtc, tz, lang){
-    if (!dateUtc) return "—";
-    // pick locale by language
-    var locale;
-    switch(lang){
-      case "ru": locale = "ru-RU"; break;
-      case "en": locale = "en-US"; break;
-      case "es": locale = "es-ES"; break;
-      case "it": locale = "it-IT"; break;
-      case "nl": locale = "nl-NL"; break;
-      case "de": locale = "de-DE"; break;
-      case "fr": locale = "fr-FR"; break;
-      case "pt": locale = "pt-PT"; break;
-      case "ko": locale = "ko-KR"; break;
-      case "ar": locale = "ar-AE"; break;
-      default: locale = (lang === "ru" ? "ru-RU" : "en-US");
-    }
-    try{
-      var opts = {
-        weekday: "short",
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZoneName: "short"
+      document.addEventListener("keydown", handleKey);
+      gameContainer._cleanup = () => {
+        clearInterval(interval);
+        document.removeEventListener("keydown", handleKey);
       };
-      if (tz !== "local"){
-        opts.timeZone = tz;
-      }
-      var s = new Intl.DateTimeFormat(locale, opts).format(dateUtc);
-      // Небольшой твик для русского: вместо "г., 13:00" → "г. в 13:00"
-      if (lang === "ru"){
-        s = s.replace(" г., ", " г. в ");
-      }
-      return s;
-    }catch(e){
-      // Fallback — старое простое поведение
-      try{
-        if (tz === "local"){
-          return dateUtc.toLocaleString(locale);
+
+      gameContainer.appendChild(title);
+      gameContainer.appendChild(hint);
+      gameContainer.appendChild(canvas);
+      draw();
+      return;
+    }
+
+    // ------- 2048 -------
+    if (name === "game2048") {
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = t.game2048Title;
+      const hint = document.createElement("div");
+      hint.className = "small-text";
+      hint.textContent = t.game2048Hint;
+
+      const size = 4;
+      let board = Array.from({ length: size }, () => Array(size).fill(0));
+
+      const container = document.createElement("div");
+      container.style.display = "grid";
+      container.style.gridTemplateColumns = "repeat(4, 1fr)";
+      container.style.gap = "4px";
+      container.style.marginTop = "8px";
+
+      function addRandomTile() {
+        const empty = [];
+        for (let r = 0; r < size; r++) {
+          for (let c = 0; c < size; c++) {
+            if (board[r][c] === 0) empty.push([r, c]);
+          }
         }
-        if (typeof Intl === "object" && typeof Intl.DateTimeFormat === "function"){
-          var fmt = new Intl.DateTimeFormat(locale, {
-            timeZone: tz,
-            year: "numeric", month: "2-digit", day: "2-digit",
-            hour: "2-digit", minute: "2-digit"
+        if (!empty.length) return;
+        const [r, c] = empty[Math.floor(Math.random() * empty.length)];
+        board[r][c] = Math.random() < 0.9 ? 2 : 4;
+      }
+
+      function drawBoard() {
+        container.innerHTML = "";
+        for (let r = 0; r < size; r++) {
+          for (let c = 0; c < size; c++) {
+            const cell = document.createElement("div");
+            cell.style.height = "45px";
+            cell.style.display = "flex";
+            cell.style.alignItems = "center";
+            cell.style.justifyContent = "center";
+            cell.style.borderRadius = "6px";
+            cell.style.fontWeight = "600";
+            cell.style.fontSize = "14px";
+            const val = board[r][c];
+            if (val === 0) {
+              cell.style.background = "#e5e7eb";
+              cell.textContent = "";
+            } else {
+              cell.style.background = "#3b82f6";
+              cell.style.color = "#fff";
+              cell.textContent = val;
+            }
+            container.appendChild(cell);
+          }
+        }
+      }
+
+      function slideRow(row) {
+        const arr = row.filter(v => v !== 0);
+        for (let i = 0; i < arr.length - 1; i++) {
+          if (arr[i] === arr[i + 1]) {
+            arr[i] *= 2;
+            arr[i + 1] = 0;
+          }
+        }
+        return arr.filter(v => v !== 0);
+      }
+
+      function moveLeft() {
+        let changed = false;
+        for (let r = 0; r < size; r++) {
+          const row = board[r];
+          const newRow = slideRow(row);
+          while (newRow.length < size) newRow.push(0);
+          if (newRow.toString() !== row.toString()) changed = true;
+          board[r] = newRow;
+        }
+        if (changed) addRandomTile();
+        drawBoard();
+      }
+
+      function moveRight() {
+        let changed = false;
+        for (let r = 0; r < size; r++) {
+          const row = [...board[r]].reverse();
+          const newRow = slideRow(row);
+          while (newRow.length < size) newRow.push(0);
+          newRow.reverse();
+          if (newRow.toString() !== board[r].toString()) changed = true;
+          board[r] = newRow;
+        }
+        if (changed) addRandomTile();
+        drawBoard();
+      }
+
+      function moveUp() {
+        let changed = false;
+        for (let c = 0; c < size; c++) {
+          const col = [];
+          for (let r = 0; r < size; r++) col.push(board[r][c]);
+          const newCol = slideRow(col);
+          while (newCol.length < size) newCol.push(0);
+          for (let r = 0; r < size; r++) {
+            if (board[r][c] !== newCol[r]) changed = true;
+            board[r][c] = newCol[r];
+          }
+        }
+        if (changed) addRandomTile();
+        drawBoard();
+      }
+
+      function moveDown() {
+        let changed = false;
+        for (let c = 0; c < size; c++) {
+          const col = [];
+          for (let r = 0; r < size; r++) col.push(board[r][c]);
+          col.reverse();
+          const newCol = slideRow(col);
+          while (newCol.length < size) newCol.push(0);
+          newCol.reverse();
+          for (let r = 0; r < size; r++) {
+            if (board[r][c] !== newCol[r]) changed = true;
+            board[r][c] = newCol[r];
+          }
+        }
+        if (changed) addRandomTile();
+        drawBoard();
+      }
+
+      function handleKey(e) {
+        if (["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(e.key)) {
+          e.preventDefault();
+        }
+        if (e.key === "ArrowLeft") moveLeft();
+        else if (e.key === "ArrowRight") moveRight();
+        else if (e.key === "ArrowUp") moveUp();
+        else if (e.key === "ArrowDown") moveDown();
+      }
+
+      document.addEventListener("keydown", handleKey);
+      gameContainer._cleanup = () => {
+        document.removeEventListener("keydown", handleKey);
+      };
+
+      addRandomTile();
+      addRandomTile();
+      drawBoard();
+
+      gameContainer.appendChild(title);
+      gameContainer.appendChild(hint);
+      gameContainer.appendChild(container);
+      return;
+    }
+
+    // ------- FLAPPY -------
+    if (name === "flappy") {
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = t.flappyTitle;
+      const hint = document.createElement("div");
+      hint.className = "small-text";
+      hint.textContent = t.flappyHint;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 260;
+      canvas.height = 220;
+      const ctx = canvas.getContext("2d");
+
+      let y = canvas.height / 2;
+      let vel = 0;
+      const gravity = 0.4;
+      const jump = -6;
+      let pipes = [];
+      let frame = 0;
+      let score = 0;
+      let gameOver = false;
+
+      function spawnPipe() {
+        const gap = 70;
+        const min = 30;
+        const max = canvas.height - gap - 30;
+        const top = Math.floor(Math.random() * (max - min)) + min;
+        pipes.push({ x: canvas.width, top });
+      }
+
+      function draw() {
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#22c55e";
+        pipes.forEach(p => {
+          ctx.fillRect(p.x, 0, 30, p.top);
+          ctx.fillRect(p.x, p.top + 70, 30, canvas.height - (p.top + 70));
+        });
+
+        ctx.fillStyle = "#facc15";
+        ctx.beginPath();
+        ctx.arc(60, y, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "12px sans-serif";
+        ctx.fillText("Score: " + score, 10, 15);
+
+        if (gameOver) {
+          ctx.fillStyle = "rgba(0,0,0,0.5)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#fff";
+          ctx.font = "14px sans-serif";
+          ctx.fillText("Game Over", 80, 110);
+        }
+      }
+
+      function tick() {
+        if (gameOver) {
+          draw();
+          return;
+        }
+        frame++;
+        if (frame % 80 === 0) spawnPipe();
+
+        vel += gravity;
+        y += vel;
+
+        pipes.forEach(p => p.x -= 2);
+        pipes = pipes.filter(p => p.x > -40);
+
+        if (y < 8 || y > canvas.height - 8) {
+          gameOver = true;
+        }
+
+        pipes.forEach(p => {
+          if (60 + 8 > p.x && 60 - 8 < p.x + 30) {
+            if (y - 8 < p.top || y + 8 > p.top + 70) {
+              gameOver = true;
+            }
+          }
+          if (!gameOver && p.x + 30 === 60) {
+            score++;
+          }
+        });
+
+        draw();
+      }
+
+      function flap() {
+        if (gameOver) {
+          // restart
+          y = canvas.height / 2;
+          vel = 0;
+          pipes = [];
+          frame = 0;
+          score = 0;
+          gameOver = false;
+          return;
+        }
+        vel = jump;
+      }
+
+      const interval = setInterval(tick, 30);
+      function handleKey(e) {
+        if (e.key === " ") {
+          e.preventDefault();
+          flap();
+        }
+      }
+      function handleClick() {
+        flap();
+      }
+
+      document.addEventListener("keydown", handleKey);
+      canvas.addEventListener("click", handleClick);
+      gameContainer._cleanup = () => {
+        clearInterval(interval);
+        document.removeEventListener("keydown", handleKey);
+        canvas.removeEventListener("click", handleClick);
+      };
+
+      gameContainer.appendChild(title);
+      gameContainer.appendChild(hint);
+      gameContainer.appendChild(canvas);
+      draw();
+      return;
+    }
+
+    // ------- SNAKE -------
+    if (name === "snake") {
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = t.snakeTitle;
+      const hint = document.createElement("div");
+      hint.className = "small-text";
+      hint.textContent = t.snakeHint;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 220;
+      canvas.height = 220;
+      const ctx = canvas.getContext("2d");
+
+      const cell = 11;
+      const cols = canvas.width / cell;
+      const rows = canvas.height / cell;
+
+      let snake = [{ x: 5, y: 5 }];
+      let dir = { x: 1, y: 0 };
+      let food = { x: 10, y: 10 };
+      let gameOver = false;
+
+      function placeFood() {
+        food.x = Math.floor(Math.random() * cols);
+        food.y = Math.floor(Math.random() * rows);
+      }
+
+      function draw() {
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#f97316";
+        snake.forEach((s, i) => {
+          ctx.globalAlpha = i === 0 ? 1 : 0.8;
+          ctx.fillRect(s.x * cell, s.y * cell, cell - 1, cell - 1);
+        });
+        ctx.globalAlpha = 1;
+
+        ctx.fillStyle = "#22c55e";
+        ctx.fillRect(food.x * cell, food.y * cell, cell - 1, cell - 1);
+
+        if (gameOver) {
+          ctx.fillStyle = "rgba(0,0,0,0.5)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#fff";
+          ctx.font = "14px sans-serif";
+          ctx.fillText("Game Over", 70, 110);
+        }
+      }
+
+      function tick() {
+        if (gameOver) {
+          draw();
+          return;
+        }
+        const head = { ...snake[0] };
+        head.x += dir.x;
+        head.y += dir.y;
+
+        if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) {
+          gameOver = true;
+          draw();
+          return;
+        }
+        if (snake.some(s => s.x === head.x && s.y === head.y)) {
+          gameOver = true;
+          draw();
+          return;
+        }
+
+        snake.unshift(head);
+
+        if (head.x === food.x && head.y === food.y) {
+          placeFood();
+        } else {
+          snake.pop();
+        }
+
+        draw();
+      }
+
+      const interval = setInterval(tick, 120);
+
+      function handleKey(e) {
+        if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) e.preventDefault();
+        if (e.key === "ArrowUp" && dir.y === 0) dir = { x: 0, y: -1 };
+        else if (e.key === "ArrowDown" && dir.y === 0) dir = { x: 0, y: 1 };
+        else if (e.key === "ArrowLeft" && dir.x === 0) dir = { x: -1, y: 0 };
+        else if (e.key === "ArrowRight" && dir.x === 0) dir = { x: 1, y: 0 };
+      }
+
+      document.addEventListener("keydown", handleKey);
+      gameContainer._cleanup = () => {
+        clearInterval(interval);
+        document.removeEventListener("keydown", handleKey);
+      };
+
+      gameContainer.appendChild(title);
+      gameContainer.appendChild(hint);
+      gameContainer.appendChild(canvas);
+      draw();
+      return;
+    }
+
+    // ------- MEMORY -------
+    if (name === "memory") {
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = t.memoryTitle;
+      const hint = document.createElement("div");
+      hint.className = "small-text";
+      hint.textContent = t.memoryHint;
+
+      const grid = document.createElement("div");
+      grid.style.display = "grid";
+      grid.style.gridTemplateColumns = "repeat(4, 1fr)";
+      grid.style.gap = "4px";
+      grid.style.marginTop = "8px";
+
+      const icons = ["🍎","🍋","🍓","🍉","🥕","🍇","🍒","🥝"];
+      let cards = icons.concat(icons).map((icon, idx) => ({
+        id: idx,
+        icon,
+        open: false,
+        matched: false
+      }));
+
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+
+      let opened = [];
+
+      function render() {
+        grid.innerHTML = "";
+        cards.forEach((card, idx) => {
+          const cell = document.createElement("div");
+          cell.style.height = "45px";
+          cell.style.display = "flex";
+          cell.style.alignItems = "center";
+          cell.style.justifyContent = "center";
+          cell.style.borderRadius = "8px";
+          cell.style.cursor = card.matched ? "default" : "pointer";
+          cell.style.fontSize = "24px";
+          cell.style.background = card.matched ? "#22c55e" : "#e5e7eb";
+          cell.style.color = card.open || card.matched ? "#111" : "transparent";
+          cell.textContent = card.icon;
+          cell.addEventListener("click", () => {
+            if (card.matched || card.open) return;
+            if (opened.length >= 2) return;
+            card.open = true;
+            opened.push(idx);
+            render();
+            if (opened.length === 2) {
+              const [i1, i2] = opened;
+              const c1 = cards[i1];
+              const c2 = cards[i2];
+              if (c1.icon === c2.icon) {
+                c1.matched = c2.matched = true;
+                opened = [];
+              } else {
+                setTimeout(() => {
+                  c1.open = false;
+                  c2.open = false;
+                  opened = [];
+                  render();
+                }, 700);
+              }
+            }
           });
-          return fmt.format(dateUtc);
-        }
-      }catch(e2){}
-      return dateUtc.toUTCString();
-    }
-  }
-
-  function updateTexts(){
-    var t = getTexts(state.lang);
-
-    if ($("title")) $("title").textContent = t.title;
-    document.title = t.title;
-    if ($("note")) $("note").textContent = t.note;
-    if ($("title_conv")) $("title_conv").textContent = t.conv;
-    if ($("title_setup")) $("title_setup").textContent = t.setup;
-    if ($("label_input")) $("label_input").textContent = t.input_label;
-    if ($("hint_picker")) $("hint_picker").textContent = t.picker_hint;
-    if ($("hint_input")){
-      var fmt;
-      var df = getActiveDf();
-      if (df === "MDY") fmt = "MM/DD/YYYY HH:MM";
-      else if (df === "DMY") fmt = "DD/MM/YYYY HH:MM";
-      else if (df === "D.M.Y") fmt = "DD.MM.YYYY HH:MM";
-      else if (df === "YMD") fmt = "YYYY-MM-DD HH:MM";
-      else fmt = "DD.MM.YYYY HH:MM";
-      $("hint_input").textContent = t.text_hint.replace("{fmt}", fmt);
-    }
-    if ($("label_tz")) $("label_tz").firstChild.nodeValue = t.tz_label + " ";
-    if ($("tzSearch")) $("tzSearch").placeholder = t.search_placeholder;
-    if ($("btnAuto")) $("btnAuto").textContent = t.auto_btn;
-    if ($("label_result")) $("label_result").firstChild.nodeValue = t.result + " ";
-    if ($("label_now")) $("label_now").textContent = t.current_time;
-    if ($("label_lang")) $("label_lang").textContent = t.lang_label;
-    if ($("hint_lang")) $("hint_lang").textContent = t.lang_hint;
-    if ($("label_df")) $("label_df").textContent = t.df_label;
-    if ($("hint_df")) $("hint_df").textContent = t.df_hint;
-    if ($("df_auto")) $("df_auto").textContent = t.df_auto;
-    if ($("tabPicker")) $("tabPicker").textContent = t.tab_picker;
-    if ($("tabText")) $("tabText").textContent = t.tab_text;
-    if ($("btnRefresh")) $("btnRefresh").textContent = t.refresh_btn;
-    if ($("btnSupport")) $("btnSupport").textContent = t.support_btn;
-    if ($("utcInput")) $("utcInput").placeholder = t.input_placeholder || "2025-11-05 14:00";
-    // при смене языка/формата пересоздаём контролы прокрутки под новый формат
-    if (typeof initPickerControls === "function"){
-      initPickerControls();
-    }
-  }
-
-  function renderZones(list){
-    var box = $("zoneList");
-    if (!box) return;
-    box.innerHTML = "";
-    for (var i=0;i<list.length;i++){
-      var z = list[i];
-      var b = document.createElement("button");
-      b.textContent = z;
-      if (z === state.tz) b.className = "active";
-      b.addEventListener("click", (function(zone){
-        return function(){
-          state.tz = zone;
-          try { window.localStorage.setItem("calc_tz", zone); } catch(e){}
-          updateTZLabels();
-          refreshZones();
-          renderOutput();
-        };
-      })(z));
-      box.appendChild(b);
-    }
-  }
-
-  function refreshZones(){
-    var all = getAllZones();
-    var q = "";
-    if ($("tzSearch")) q = $("tzSearch").value.toLowerCase();
-    var out = [];
-    for (var i=0;i<all.length;i++){
-      var z = all[i];
-      if (!q || z.toLowerCase().indexOf(q) !== -1){
-        out.push(z);
+          grid.appendChild(cell);
+        });
       }
-    }
-    // Ensure current tz is first
-    var result = [];
-    if (out.indexOf(state.tz) !== -1){
-      result.push(state.tz);
-      for (var j=0;j<out.length;j++){
-        if (out[j] !== state.tz) result.push(out[j]);
-      }
-    } else {
-      result = out;
-    }
-    renderZones(result);
-  }
 
-  function updateTZLabels(){
-    if ($("tzCurrent")) $("tzCurrent").textContent = state.tz;
-    if ($("tzChip")) $("tzChip").textContent = state.tz;
-  }
-
-  function renderOutput(){
-    var t = getTexts(state.lang);
-    var outLocal = $("outLocal");
-    var outTz = $("outTz");
-    var cd = $("countdown");
-    var err = $("input_err");
-
-    if (!state.utcDate){
-      if (outLocal) outLocal.textContent = "—";
-      if (outTz) outTz.textContent = "";
-      if (cd) cd.textContent = "";
-      if (err) err.style.display = "none";
-      updateShare();
+      render();
+      gameContainer.appendChild(title);
+      gameContainer.appendChild(hint);
+      gameContainer.appendChild(grid);
       return;
     }
 
-    if (err) err.style.display = "none";
+    // ------- BUBBLE POP -------
+    if (name === "bubble") {
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = t.bubbleTitle;
+      const hint = document.createElement("div");
+      hint.className = "small-text";
+      hint.textContent = t.bubbleHint;
 
-    var localStr = formatInTZ(state.utcDate, state.tz, state.lang);
-    if (outLocal) outLocal.textContent = localStr;
-    if (outTz){
-      // вторая строка: просто идентификатор часового пояса
-      var tzLabel = state.tz;
-      if (tzLabel === "local"){
-        try{
-          tzLabel = Intl.DateTimeFormat().resolvedOptions().timeZone || "local";
-        }catch(e){
-          tzLabel = "local";
-        }
+      const wrap = document.createElement("div");
+      wrap.style.position = "relative";
+      wrap.style.height = "200px";
+      wrap.style.background = "#e0f2fe";
+      wrap.style.borderRadius = "8px";
+      wrap.style.overflow = "hidden";
+
+      let score = 0;
+      const scoreEl = document.createElement("div");
+      scoreEl.className = "small-text";
+      scoreEl.style.marginTop = "6px";
+
+      function updateScore() {
+        scoreEl.textContent =
+          currentLang === "ru" ? `Счёт: ${score}` : `Score: ${score}`;
       }
-      outTz.textContent = tzLabel;
-    }
+      updateScore();
 
-    // countdown relative to now (real now in same TZ display, but diff only uses UTC)
-    if (cd){
-      var now = new Date();
-      var diff = Math.floor((state.utcDate.getTime() - now.getTime())/1000);
-      if (Math.abs(diff) < 1){
-        cd.textContent = t.now;
-      } else {
-        var past = diff < 0;
-        if (past) diff = -diff;
-        var dd = Math.floor(diff/86400); diff %= 86400;
-        var hh = Math.floor(diff/3600); diff %= 3600;
-        var mm = Math.floor(diff/60); var ss = diff % 60;
-        var unit_d = t.unit_d || "d";
-        var unit_h = t.unit_h || "h";
-        var unit_m = t.unit_m || "m";
-        var unit_s = t.unit_s || "s";
-        var parts = [];
-        if (dd) parts.push(dd + " " + unit_d);
-        if (hh || dd) parts.push((hh<10?"0":"") + hh + " " + unit_h);
-        parts.push((mm<10?"0":"") + mm + " " + unit_m);
-        parts.push((ss<10?"0":"") + ss + " " + unit_s);
-        cd.textContent = (past ? t.passed : t.left) + ": " + parts.join(" ");
+      function spawnBubble() {
+        const bubble = document.createElement("div");
+        const size = 20 + Math.random() * 25;
+        bubble.style.width = size + "px";
+        bubble.style.height = size + "px";
+        bubble.style.borderRadius = "50%";
+        bubble.style.border = "2px solid #38bdf8";
+        bubble.style.position = "absolute";
+        bubble.style.left = Math.random() * (wrap.clientWidth - size) + "px";
+        bubble.style.top = wrap.clientHeight + "px";
+        bubble.style.boxSizing = "border-box";
+        let y = wrap.clientHeight + size;
+        const speed = 0.5 + Math.random();
+        const id = setInterval(() => {
+          y -= speed;
+          bubble.style.top = y + "px";
+          if (y < -size) {
+            clearInterval(id);
+            bubble.remove();
+          }
+        }, 16);
+
+        bubble.addEventListener("click", () => {
+          clearInterval(id);
+          bubble.remove();
+          score++;
+          updateScore();
+        });
+
+        wrap.appendChild(bubble);
       }
-    }
 
-    updateShare();
-  }
+      const interval = setInterval(spawnBubble, 800);
+      gameContainer._cleanup = () => {
+        clearInterval(interval);
+      };
 
-  function updateShare(){
-    var box = $("share");
-    if (!box){ return; }
-    if (!state.utcDate){
-      box.textContent = "";
+      gameContainer.appendChild(title);
+      gameContainer.appendChild(hint);
+      gameContainer.appendChild(wrap);
+      gameContainer.appendChild(scoreEl);
       return;
     }
-    var base;
-    try{
-      if (window.location && window.location.origin){
-        base = window.location.origin + window.location.pathname;
-      } else {
-        base = window.location.pathname || "";
-      }
-    }catch(e){
-      base = "";
-    }
-    var params = [];
-    params.push("lang=" + encodeURIComponent(state.lang));
-    params.push("tz=" + encodeURIComponent(state.tz));
-    params.push("mode=" + encodeURIComponent(state.mode));
-    params.push("df=" + encodeURIComponent(state.dateFormat));
-    params.push("utc=" + encodeURIComponent(formatIsoUtcMin(state.utcDate)));
-    box.textContent = base + "?" + params.join("&");
-  }
 
-  function onTextInputChange(){
-    var input = $("utcInput");
-    var t = getTexts(state.lang);
-    var err = $("input_err");
-    var val = input ? input.value : "";
+    // ------- NUMBER RUSH -------
+    if (name === "number") {
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = t.numberTitle;
+      const hint = document.createElement("div");
+      hint.className = "small-text";
+      hint.textContent = t.numberHint;
 
-    // автоформатирование по текущему формату
-    if (input){
-      var masked = maskInputByFormat(val);
-      if (masked !== val){
-        input.value = masked;
-        val = masked;
-      }
-    }
+      const grid = document.createElement("div");
+      grid.style.display = "grid";
+      grid.style.gridTemplateColumns = "repeat(5, 1fr)";
+      grid.style.gap = "4px";
+      grid.style.marginTop = "8px";
 
-    var d = parseByFormat(val);
-    if (!d){
-      state.utcDate = null;
-      if (val && err){
-        err.style.display = "block";
-        var df = getActiveDf();
-        var fmt;
-        if (df === "MDY") fmt = "MM/DD/YYYY HH:MM";
-        else if (df === "DMY") fmt = "DD/MM/YYYY HH:MM";
-        else if (df === "D.M.Y") fmt = "DD.MM.YYYY HH:MM";
-        else if (df === "YMD") fmt = "YYYY-MM-DD HH:MM";
-        else fmt = "DD.MM.YYYY HH:MM";
-        err.textContent = t.text_err.replace("{fmt}", fmt);
-      } else if (err){
-        err.style.display = "none";
-      }
-      renderOutput();
-      return;
-    }
-    state.utcDate = d;
-    if (err) err.style.display = "none";
-    renderOutput();
-  }
-
-function onPickerChange(){
-    var selDay = $("selDay");
-    var selMon = $("selMon");
-    var selYear = $("selYear");
-    if (!selDay || !selMon || !selYear){
-      renderOutput();
-      return;
-    }
-    var day = parseInt(selDay.value || "1", 10);
-    var month = parseInt(selMon.value || "1", 10);
-    var year = parseInt(selYear.value || "1970", 10);
-    if (isNaN(year) || isNaN(month) || isNaN(day)){
-      state.utcDate = null;
-      renderOutput();
-      return;
-    }
-    var hhSel = $("hh");
-    var mmSel = $("mm");
-    var hh = hhSel ? parseInt(hhSel.value||"0",10) : 0;
-    var mm = mmSel ? parseInt(mmSel.value||"0",10) : 0;
-    if (isNaN(hh)) hh = 0;
-    if (isNaN(mm)) mm = 0;
-    state.utcDate = new Date(Date.UTC(year, month-1, day, hh, mm, 0, 0));
-    renderOutput();
-  }
-
-  function onLangChange(){
-    var v = $("lang").value;
-    if (SUPPORTED_LANGS.indexOf(v) === -1){
-      state.lang = "en";
-    } else {
-      state.lang = v;
-    }
-    try{ window.localStorage.setItem("calc_lang", state.lang); }catch(e){}
-    updateTexts();
-    renderOutput();
-  }
-
-  function onDfChange(){
-    var sel = $("dateFormat");
-    if (!sel) return;
-    state.dateFormat = sel.value || "auto";
-    updateTexts();
-    renderOutput();
-  }
-
-  function onModeChange(mode){
-    state.mode = mode;
-    var tabP = $("tabPicker");
-    var tabT = $("tabText");
-    var boxP = $("pickerBox");
-    var boxT = $("textBox");
-    if (mode === "picker"){
-      if (tabP) tabP.classList.add("active");
-      if (tabT) tabT.classList.remove("active");
-      if (boxP) boxP.classList.remove("hidden");
-      if (boxT) boxT.classList.add("hidden");
-    } else {
-      if (tabP) tabP.classList.remove("active");
-      if (tabT) tabT.classList.add("active");
-      if (boxP) boxP.classList.add("hidden");
-      if (boxT) boxT.classList.remove("hidden");
-    }
-    renderOutput();
-  }
-
-  function initPickerControls(){
-    var container = $("datePicker");
-    if (container){
-      container.innerHTML = "";
-      var df = getActiveDf();
-
-      var selDay = document.createElement("select");
-      selDay.id = "selDay";
-      selDay.className = "field";
-
-      var selMon = document.createElement("select");
-      selMon.id = "selMon";
-      selMon.className = "field";
-
-      var selYear = document.createElement("select");
-      selYear.id = "selYear";
-      selYear.className = "field";
-
-      for (var d = 1; d <= 31; d++){
-        var oD = document.createElement("option");
-        oD.value = String(d);
-        oD.textContent = d < 10 ? "0"+d : String(d);
-        selDay.appendChild(oD);
+      const nums = [];
+      for (let i = 1; i <= 25; i++) nums.push(i);
+      for (let i = nums.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [nums[i], nums[j]] = [nums[j], nums[i]];
       }
 
-      for (var m = 1; m <= 12; m++){
-        var oM = document.createElement("option");
-        oM.value = String(m);
-        oM.textContent = m < 10 ? "0"+m : String(m);
-        selMon.appendChild(oM);
-      }
+      let target = 1;
 
-      var now = state.utcDate ? new Date(state.utcDate.getTime()) : new Date();
-      var baseYear = now.getUTCFullYear();
-      for (var y = baseYear - 1; y <= baseYear + 5; y++){
-        var oY = document.createElement("option");
-        oY.value = String(y);
-        oY.textContent = String(y);
-        selYear.appendChild(oY);
-      }
-
-      function addSep(txt){
-        var span = document.createElement("span");
-        span.className = "sep";
-        span.textContent = txt;
-        return span;
-      }
-
-      if (df === "MDY"){
-        container.appendChild(selMon);
-        container.appendChild(addSep("/"));
-        container.appendChild(selDay);
-        container.appendChild(addSep("/"));
-        container.appendChild(selYear);
-      } else if (df === "DMY"){
-        container.appendChild(selDay);
-        container.appendChild(addSep("/"));
-        container.appendChild(selMon);
-        container.appendChild(addSep("/"));
-        container.appendChild(selYear);
-      } else if (df === "D.M.Y"){
-        container.appendChild(selDay);
-        container.appendChild(addSep("."));
-        container.appendChild(selMon);
-        container.appendChild(addSep("."));
-        container.appendChild(selYear);
-      } else if (df === "YMD"){
-        container.appendChild(selYear);
-        container.appendChild(addSep("-"));
-        container.appendChild(selMon);
-        container.appendChild(addSep("-"));
-        container.appendChild(selDay);
-      } else {
-        container.appendChild(selDay);
-        container.appendChild(addSep("/"));
-        container.appendChild(selMon);
-        container.appendChild(addSep("/"));
-        container.appendChild(selYear);
-      }
-
-      var base = state.utcDate ? new Date(state.utcDate.getTime()) : new Date();
-      var bY = base.getUTCFullYear();
-      var bM = base.getUTCMonth() + 1;
-      var bD = base.getUTCDate();
-
-      selYear.value = String(bY);
-      selMon.value = String(bM);
-      selDay.value = String(bD);
-
-      selDay.addEventListener("change", onPickerChange);
-      selMon.addEventListener("change", onPickerChange);
-      selYear.addEventListener("change", onPickerChange);
-    }
-
-    var hhSel = $("hh");
-    var mmSel = $("mm");
-    var baseTime = state.utcDate ? new Date(state.utcDate.getTime()) : new Date();
-    var initH = baseTime.getUTCHours();
-    var initM = baseTime.getUTCMinutes();
-
-    if (hhSel){
-      hhSel.innerHTML = "";
-      for (var h=0;h<24;h++){
-        var optH = document.createElement("option");
-        var sH = (h<10?"0":"")+h;
-        optH.value = sH;
-        optH.textContent = sH;
-        if (h === initH) optH.selected = true;
-        hhSel.appendChild(optH);
-      }
-      hhSel.addEventListener("change", onPickerChange);
-    }
-    if (mmSel){
-      mmSel.innerHTML = "";
-      for (var m=0;m<60;m+=5){
-        var optM = document.createElement("option");
-        var sM = (m<10?"0":"")+m;
-        optM.value = sM;
-        optM.textContent = sM;
-        if (m === initM) optM.selected = true;
-        mmSel.appendChild(optM);
-      }
-      mmSel.addEventListener("change", onPickerChange);
-    }
-  }
-
-  function initZones(){
-    var storedTz = null;
-    try{
-      storedTz = window.localStorage.getItem("calc_tz");
-    }catch(e){}
-    if (storedTz){
-      state.tz = storedTz;
-    }
-    updateTZLabels();
-    refreshZones();
-    if ($("tzSearch")){
-      $("tzSearch").addEventListener("input", function(){ refreshZones(); });
-    }
-    if ($("btnAuto")){
-      $("btnAuto").addEventListener("click", function(){
-        state.tz = getUserTZ();
-        try{ window.localStorage.setItem("calc_tz", state.tz); }catch(e){}
-        updateTZLabels();
-        refreshZones();
-        renderOutput();
+      nums.forEach((num) => {
+        const cell = document.createElement("div");
+        cell.style.height = "35px";
+        cell.style.display = "flex";
+        cell.style.alignItems = "center";
+        cell.style.justifyContent = "center";
+        cell.style.borderRadius = "8px";
+        cell.style.cursor = "pointer";
+        cell.style.fontSize = "14px";
+        cell.style.background = "#e5e7eb";
+        cell.textContent = num;
+        cell.addEventListener("click", () => {
+          if (num === target) {
+            cell.style.background = "#22c55e";
+            cell.style.color = "#fff";
+            target++;
+          }
+        });
+        grid.appendChild(cell);
       });
-    }
-  }
 
-  function initNowTimer(){
-    function tick(){
-      var t = getTexts(state.lang);
-      if ($("label_now")) $("label_now").textContent = t.current_time;
-      if ($("outNow")){
-        var now = new Date();
-        $("outNow").textContent = formatInTZ(now, state.tz, state.lang);
+      gameContainer.appendChild(title);
+      gameContainer.appendChild(hint);
+      gameContainer.appendChild(grid);
+      return;
+    }
+
+    // ------- BOUNCE BALL (мини-арканоид) -------
+    if (name === "bounce") {
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = t.bounceTitle;
+      const hint = document.createElement("div");
+      hint.className = "small-text";
+      hint.textContent = t.bounceHint;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 260;
+      canvas.height = 200;
+      const ctx = canvas.getContext("2d");
+
+      let paddleX = canvas.width / 2 - 30;
+      const paddleW = 60;
+      const paddleH = 8;
+      let ballX = canvas.width / 2;
+      let ballY = canvas.height - 20;
+      let ballVX = 2;
+      let ballVY = -2;
+
+      const rows = 3;
+      const cols = 7;
+      const brickW = 30;
+      const brickH = 10;
+      const brickPadding = 4;
+      const brickOffsetTop = 20;
+      const brickOffsetLeft = 10;
+      const bricks = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          bricks.push({
+            x: brickOffsetLeft + c * (brickW + brickPadding),
+            y: brickOffsetTop + r * (brickH + brickPadding),
+            alive: true
+          });
+        }
       }
-      // countdown is already relative to state.utcDate in renderOutput, but we can refresh too
-      renderOutput();
+
+      function draw() {
+        ctx.fillStyle = "#020617";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#22c55e";
+        bricks.forEach(b => {
+          if (b.alive) {
+            ctx.fillRect(b.x, b.y, brickW, brickH);
+          }
+        });
+
+        ctx.fillStyle = "#e5e7eb";
+        ctx.fillRect(paddleX, canvas.height - 20, paddleW, paddleH);
+
+        ctx.fillStyle = "#facc15";
+        ctx.beginPath();
+        ctx.arc(ballX, ballY, 5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function tick() {
+        ballX += ballVX;
+        ballY += ballVY;
+
+        if (ballX < 5 || ballX > canvas.width - 5) ballVX *= -1;
+        if (ballY < 5) ballVY *= -1;
+
+        if (
+          ballY > canvas.height - 20 - 5 &&
+          ballY < canvas.height &&
+          ballX > paddleX &&
+          ballX < paddleX + paddleW
+        ) {
+          ballVY *= -1;
+        }
+
+        bricks.forEach(b => {
+          if (!b.alive) return;
+          if (
+            ballX > b.x &&
+            ballX < b.x + brickW &&
+            ballY > b.y &&
+            ballY < b.y + brickH
+          ) {
+            b.alive = false;
+            ballVY *= -1;
+          }
+        });
+
+        if (ballY > canvas.height + 10) {
+          ballX = canvas.width / 2;
+          ballY = canvas.height - 20;
+          ballVX = 2;
+          ballVY = -2;
+        }
+
+        draw();
+      }
+
+      const interval = setInterval(tick, 16);
+
+      function handleKey(e) {
+        if (e.key === "ArrowLeft") {
+          paddleX -= 15;
+        } else if (e.key === "ArrowRight") {
+          paddleX += 15;
+        }
+        if (paddleX < 0) paddleX = 0;
+        if (paddleX + paddleW > canvas.width) paddleX = canvas.width - paddleW;
+      }
+
+      document.addEventListener("keydown", handleKey);
+      gameContainer._cleanup = () => {
+        clearInterval(interval);
+        document.removeEventListener("keydown", handleKey);
+      };
+
+      gameContainer.appendChild(title);
+      gameContainer.appendChild(hint);
+      gameContainer.appendChild(canvas);
+      draw();
+      return;
     }
-    tick();
-    window.setInterval(tick, 1000);
+
+    // ------- ORBIT CLICKER -------
+    if (name === "orbit") {
+      const title = document.createElement("div");
+      title.className = "game-title";
+      title.textContent = t.orbitTitle;
+      const hint = document.createElement("div");
+      hint.className = "small-text";
+      hint.textContent = t.orbitHint;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 260;
+      canvas.height = 200;
+      const ctx = canvas.getContext("2d");
+
+      let score = 0;
+      function drawScore() {
+        ctx.fillStyle = "#fff";
+        ctx.font = "12px sans-serif";
+        const text = currentLang === "ru" ? `Счёт: ${score}` : `Score: ${score}`;
+        ctx.fillText(text, 10, 15);
+      }
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const orbits = [
+        { r: 30, speed: 0.04, angle: 0 },
+        { r: 50, speed: -0.03, angle: 1 },
+        { r: 70, speed: 0.02, angle: 2 }
+      ];
+
+      function draw() {
+        ctx.fillStyle = "#020617";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = "#1e293b";
+        orbits.forEach(o => {
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, o.r, 0, Math.PI * 2);
+          ctx.stroke();
+        });
+
+        ctx.fillStyle = "#22c55e";
+        orbits.forEach(o => {
+          const x = centerX + Math.cos(o.angle) * o.r;
+          const y = centerY + Math.sin(o.angle) * o.r;
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        drawScore();
+      }
+
+      function tick() {
+        orbits.forEach(o => {
+          o.angle += o.speed;
+        });
+        draw();
+      }
+
+      function clickHandler(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        orbits.forEach(o => {
+          const px = centerX + Math.cos(o.angle) * o.r;
+          const py = centerY + Math.sin(o.angle) * o.r;
+          const dist = Math.hypot(x - px, y - py);
+          if (dist < 8) {
+            score++;
+          }
+        });
+      }
+
+      const interval = setInterval(tick, 30);
+      canvas.addEventListener("click", clickHandler);
+      gameContainer._cleanup = () => {
+        clearInterval(interval);
+        canvas.removeEventListener("click", clickHandler);
+      };
+
+      gameContainer.appendChild(title);
+      gameContainer.appendChild(hint);
+      gameContainer.appendChild(canvas);
+      draw();
+      return;
+    }
   }
 
-  function init(){
-    // Wire events
-    if ($("lang")) $("lang").addEventListener("change", onLangChange);
-    if ($("dateFormat")) $("dateFormat").addEventListener("change", onDfChange);
-    if ($("utcInput")) $("utcInput").addEventListener("input", onTextInputChange);
-    if ($("tabPicker")) $("tabPicker").addEventListener("click", function(){ onModeChange("picker"); });
-    if ($("tabText")) $("tabText").addEventListener("click", function(){ onModeChange("text"); });
-    if ($("btnRefresh")) $("btnRefresh").addEventListener("click", function(){
-      renderOutput();
-      initNowTimer();
-    });
-    // Support button (заглушка — пользователь потом подставит ссылку)
-    if ($("btnSupport")) $("btnSupport").addEventListener("click", function(){
-      var url = "https://yookassa.ru/my/i/aRUY6tkoUh2a/l";
-      try{ window.open(url, "_blank"); }catch(e){}
-    });
-
-    // initial UX
-    if ($("lang")) $("lang").value = state.lang;
-    if ($("dateFormat")) $("dateFormat").value = state.dateFormat;
-    updateTexts();
-    initPickerControls();
-    initZones();
-    onModeChange("picker");
-    initNowTimer();
+  function safeLoadGame(name) {
+    clearGameContainer();
+    loadGame(name);
   }
 
-  // Run init asap
-  init();
+  tabPuzzle.addEventListener("click", () => safeLoadGame("puzzle"));
+  tabTetris.addEventListener("click", () => safeLoadGame("tetris"));
+  tab2048.addEventListener("click", () => safeLoadGame("game2048"));
+  tabFlappy.addEventListener("click", () => safeLoadGame("flappy"));
+  tabSnake.addEventListener("click", () => safeLoadGame("snake"));
+  tabMemory.addEventListener("click", () => safeLoadGame("memory"));
+  tabBubble.addEventListener("click", () => safeLoadGame("bubble"));
+  tabNumber.addEventListener("click", () => safeLoadGame("number"));
+  tabBounce.addEventListener("click", () => safeLoadGame("bounce"));
+  tabOrbit.addEventListener("click", () => safeLoadGame("orbit"));
 
-  </script>
-<footer class="section" style="font-size:12px; color:#9ca3af; margin-top:16px; text-align:center;">
-  <span>© 2025 Калькулятор времени UTC</span>
-  ·
-  <a href="offerta.html"
-     target="_blank"
-     rel="noopener noreferrer"
-     style="color:#9ca3af; text-decoration:underline;">
-    Публичная оферта
-  </a>
-</footer>
-
+  safeLoadGame("puzzle");
+</script>
 </body>
 </html>
